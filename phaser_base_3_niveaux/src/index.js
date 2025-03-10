@@ -1,8 +1,3 @@
-// chargement des librairies
-import selection from "/src/js/selection.js";
-import niveau1 from "/src/js/niveau1.js";
-import niveau2 from "/src/js/niveau2.js";
-import niveau3 from "/src/js/niveau3.js";
 
 // configuration générale du jeu
 var config = {
@@ -33,4 +28,21 @@ var game = new Phaser.Game(config);
 game.scene.start("selection");
 
 var slime,
-//My name is Aliénor and I am 19 years old
+
+function preload() {
+  this.load.image("img_rail-parallele", "src/assets/rail-parallele.png"); 
+  this.load.image("img_sky", "src/assets/sky.png"); 
+  this.load.image("img_platform", "src/assets/platform.png"); 
+
+
+  this.load.spritesheet("img_perso", "src/assets/perso.png", {
+    frameWidth: 64,
+    frameHeight: 64
+  }); 
+
+  this.load.spritesheet("img_piece", "src/assets/piece.png", {
+    frameWidth: 64,
+    frameHeight: 64
+  }); 
+  
+}
