@@ -29,24 +29,4 @@ var game = new Phaser.Game(config);
 game.scene.start("menu");
 
 
-//My name is Aliénor and I am 19 years old,
 
-var slime,
-
-function preload() {
-  this.load.image("img_rail-parallele", "src/assets/rail-parallele.png"); 
-  this.load.image("img_sky", "src/assets/sky.png"); 
-  this.load.image("img_platform", "src/assets/platform.png"); 
-
-
-  this.load.spritesheet("img_perso", "src/assets/perso.png", {
-    frameWidth: 64,
-    frameHeight: 64
-  }); 
-
-  this.load.spritesheet("img_piece", "src/assets/piece.png", {
-    frameWidth: 64,
-    frameHeight: 64
-  }); 
-  
-}
