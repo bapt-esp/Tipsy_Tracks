@@ -32,5 +32,5 @@ var config = {
 var game = new Phaser.Game(config);
 game.scene.start("selection");
 
-
+var slime,
 //My name is Aliénor and I am 19 years old
