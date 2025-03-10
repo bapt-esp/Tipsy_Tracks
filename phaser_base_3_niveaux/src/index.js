@@ -31,3 +31,6 @@ var config = {
 // création et lancement du jeu
 var game = new Phaser.Game(config);
 game.scene.start("selection");
+
+
+//My name is Aliénor and I am 19 years old
