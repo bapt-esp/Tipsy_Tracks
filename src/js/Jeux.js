@@ -30,8 +30,8 @@ pour la gestion du personnage et du gameplay.*/
     this.load.image("img_background", "src/assets/background.png");
     this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 64});
-    this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
-    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 16, frameHeight: 16});
+    this.load.spritesheet("img_piece","src/assets/piece.png",{frameWidth: 64, frameHeight: 64});
+    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     
 }
@@ -52,6 +52,103 @@ create() {
         rail.setScale(2.5); // Ajustement de la hauteur
         this.rails.push(rail); // Ajout dans le tableau pour mise à jour
     }
+<<<<<<< HEAD
+=======
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    this.barrière = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_barrière");
+    this.barrière.setCollideWorldBounds(true);
+    this.barrière.setScale(2.5);
+
+    // Création de l'animation de mouvement
+    this.anims.create({
+        key: "anim_barrière",
+        frames: this.anims.generateFrameNumbers("img_barrière", { start: 0, end: 3 }),
+        frameRate: 5,
+        repeat: -1
+    });
+
+
+    // Lancer l'animation de base en boucle
+    this.barrière.anims.play("anim_barrière");
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+
+
+
+  
+
+
+
+
+    this.bouteille = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_bouteille");
+    this.bouteille.setCollideWorldBounds(true);
+    this.bouteille.setScale(1.5);
+
+    // Création de l'animation de mouvement
+    this.anims.create({
+        key: "anim_bouteille",
+        frames: this.anims.generateFrameNumbers("img_bouteille", { start: 0, end: 35 }),
+        frameRate: 24,
+        repeat: -1
+    });
+
+    // Lancer l'animation de base en boucle
+    this.bouteille.anims.play("anim_bouteille");
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+
+
+
+
+
+
+
+
+
+    this.piece = this.physics.add.sprite(this.positions[this.currentPositionIndex], 200, "img_piece");
+    this.piece.setCollideWorldBounds(true);
+    this.piece.setScale(1.5);
+
+    // Création de l'animation de mouvement
+    this.anims.create({
+        key: "anim_piece",
+        frames: this.anims.generateFrameNumbers("img_piece", { start: 0, end: 35 }),
+        frameRate: 24,
+        repeat: -1
+    });
+
+    // Lancer l'animation de base en boucle
+    this.piece.anims.play("anim_piece");
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+ 
+
+
+
+
+
+>>>>>>> 6fa0b1f551b9cc4104a8661499a6fbb1f3a77e9f
 
 
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
@@ -88,12 +185,44 @@ create() {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
+<<<<<<< HEAD
     this.barriereGroup = this.physics.add.group(); // Groupe pour gérer plusieurs barrières
     this.spawnBarriere(); // Crée une première barrière
 
     // Collision entre le perso et les barrières
     this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
   
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+>>>>>>> 6fa0b1f551b9cc4104a8661499a6fbb1f3a77e9f
 }
 
 
