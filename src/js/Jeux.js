@@ -29,8 +29,8 @@ pour la gestion du personnage et du gameplay.*/
     this.load.image("img_background", "src/assets/background.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 64});
-    this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
-    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 16, frameHeight: 16});
+    this.load.spritesheet("img_piece","src/assets/piece.png",{frameWidth: 64, frameHeight: 64});
+    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     
 }
@@ -58,6 +58,19 @@ create() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     this.barrière = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_barrière");
     this.barrière.setCollideWorldBounds(true);
     this.barrière.setScale(2.5);
@@ -70,10 +83,33 @@ create() {
         repeat: -1
     });
 
-    
 
     // Lancer l'animation de base en boucle
     this.barrière.anims.play("anim_barrière");
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+
+
+
+  
+
+
+
+
+    this.bouteille = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_bouteille");
+    this.bouteille.setCollideWorldBounds(true);
+    this.bouteille.setScale(1.5);
+
+    // Création de l'animation de mouvement
+    this.anims.create({
+        key: "anim_bouteille",
+        frames: this.anims.generateFrameNumbers("img_bouteille", { start: 0, end: 35 }),
+        frameRate: 24,
+        repeat: -1
+    });
+
+    // Lancer l'animation de base en boucle
+    this.bouteille.anims.play("anim_bouteille");
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -85,6 +121,25 @@ create() {
 
 
 
+
+    this.piece = this.physics.add.sprite(this.positions[this.currentPositionIndex], 200, "img_piece");
+    this.piece.setCollideWorldBounds(true);
+    this.piece.setScale(1.5);
+
+    // Création de l'animation de mouvement
+    this.anims.create({
+        key: "anim_piece",
+        frames: this.anims.generateFrameNumbers("img_piece", { start: 0, end: 35 }),
+        frameRate: 24,
+        repeat: -1
+    });
+
+    // Lancer l'animation de base en boucle
+    this.piece.anims.play("anim_piece");
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+ 
 
 
 
@@ -116,6 +171,35 @@ create() {
     this.perso.anims.play("anim_perso");
 
     this.cursors = this.input.keyboard.createCursorKeys();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
 
 }
 
