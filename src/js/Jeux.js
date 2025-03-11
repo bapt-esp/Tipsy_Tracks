@@ -93,7 +93,7 @@ update(time) {
     
     this.background.tilePositionY -= 2;
 
-    //sky.tilePositionY -= 3;
+ 
    
  // Gestion des déplacements gauche/droite avec cooldown
  if (!this.isMoving && this.moveCooldown < time) {
