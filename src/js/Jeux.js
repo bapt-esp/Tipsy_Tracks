@@ -10,7 +10,7 @@ export default class jeux extends Phaser.Scene {
         this.moveCooldown = 0;
         this.positions = [200, 400, 600];
         this.currentPositionIndex = 1;
-        this.background = null;
+        this.background
     }
 
 
@@ -28,7 +28,9 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 32, frameHeight: 32 });
     this.load.image("img_background", "src\assets\background.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
-    
+    this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 64});
+    this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
+    this.load.spritesheet("img_bouteille","src/assetes/boutille.png",{frameWidth: 16, frameHeight: 16});
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
