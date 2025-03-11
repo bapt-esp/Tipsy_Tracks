@@ -42,7 +42,7 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 create() {
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
-    this.background = this.add.tileSprite(400,400, 400, 400, "img_background");
+    this.background = this.add.tileSprite(400, 400, 400, 400, "img_background");
     this.background.setScale(3);
 
      // Création des trois rails indépendants aux positions 200, 400 et 600
@@ -83,7 +83,7 @@ create() {
 update(time) {
     
     this.background.tilePositionY -= 1;
-    this.rails.forEach(rail => rail.tilePositionY -= 1); // Faire défiler chaque rail
+    this.rails.forEach(rail => rail.tilePositionY -= 1.2); // Faire défiler chaque rail
 
     //sky.tilePositionY -= 3;
    
