@@ -3,7 +3,7 @@ export default class jeux extends Phaser.Scene {
     constructor() {
         super({ key: "jeux" });
         this.perso = null;
-        this.sky = null;
+        this.rails = []; //création d'un tableau pour stocker les 3 rails.
         this.barrière = null;
         this.cursors = null;
         this.isJumping = false;
@@ -21,7 +21,6 @@ pour la gestion du personnage et du gameplay.*/
 
 
 
-
 /*Cette fonction charge les ressources du jeu 
 (images et spritesheets) avant son démarrage.*/
 
@@ -33,6 +32,7 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
     this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 16, frameHeight: 16});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
+    
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -43,7 +43,7 @@ create() {
 
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
-    this.background = this.add.tileSprite(400,400, 400, 400, "img_background");
+    this.background = this.add.tileSprite(400, 400, 400, 400, "img_background");
     this.background.setScale(3);
  // Ajouter 3 rails au centre de l'écran
     let railWidth = 120;  // Largeur de chaque rail
@@ -59,39 +59,6 @@ create() {
      // Créer chaque rail, espacé de manière égale autour de la position centrale
         this.add.image(centerX + (i * spacing), centerY, "img_rails").setOrigin(0.5, 0.5).setScale(1);
  }
-
-
-
-
-
-    this.barrière = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_barrière");
-    this.barrière.setCollideWorldBounds(true);
-    this.barrière.setScale(2.5);
-
-    // Création de l'animation de mouvement
-    this.anims.create({
-        key: "anim_barrière",
-        frames: this.anims.generateFrameNumbers("img_barrière", { start: 0, end: 8 }),
-        frameRate: 12,
-        repeat: -1
-    });
-
-      // Création de l'animation de saut
-      this.anims.create({
-        key: "anim_jump",
-        frames: this.anims.generateFrameNumbers("img_barrière", { start: 0, end: 3 }),
-        frameRate: 1,
-        repeat: -1
-    });
-
-
-    // Lancer l'animation de base en boucle
-    this.barrière.anims.play("anim_barrière");
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-
-
-
 
 
     
@@ -126,6 +93,7 @@ create() {
 update(time) {
     
     this.background.tilePositionY -= 1;
+    this.rails.forEach(rail => rail.tilePositionY -= 1.2); // Faire défiler chaque rail
 
     //sky.tilePositionY -= 3;
    
