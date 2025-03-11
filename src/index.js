@@ -7,7 +7,7 @@ import jeux from "/src/js/Jeux.js";
 var config = {
   type: Phaser.AUTO,
   width: 800, // largeur en pixels
-  height: 600, // hauteur en pixels
+  height: 800, // hauteur en pixels
    scale: {
         // Or set parent divId here
         mode: Phaser.Scale.FIT,
