@@ -26,7 +26,7 @@ pour la gestion du personnage et du gameplay.*/
 
  preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 32, frameHeight: 32 });
-    this.load.image("img_background", "src\assets\background.png");
+    this.load.image("img_sky", "src/assets/sky.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
@@ -39,10 +39,10 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 create() {
 
-    this.background = this.add.tileSprite(400, 300, 800, 600, "img_background");
+    this.sky = this.add.tileSprite(400, 300, 800, 600, "img_ciel");
 
-    this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
-    this.perso.setCollideWorldBounds(true);
+    perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
+    perso.setCollideWorldBounds(true);
 
     // Création de l'animation de mouvement
     this.anims.create({
@@ -61,11 +61,11 @@ create() {
     });
 
     // Lancer l'animation de base en boucle
-    this.perso.anims.play("anim_perso");
+    perso.anims.play("anim_perso");
 
-    this.cursors = this.input.keyboard.createCursorKeys();
+    cursors = this.input.keyboard.createCursorKeys();
 
-    this.barrière = this.physics.add.group();
+    barrière = this.physics.add.group();
 
     this.time.addEvent({
         delay: 1000,
@@ -74,23 +74,23 @@ create() {
         loop: true
     });
 
-    this.physics.add.collider(this.perso, this.barrière, hitObstacle, null, this);
+    this.physics.add.collider(perso, barrière, hitObstacle, null, this);
 
 }
 
 
 update(time) {
 
-    this.sky.tilePositionY -= 3;
+    sky.tilePositionY -= 3;
    
 
-    if (this.moveCooldown < time) {
-        if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
-            this.currentPositionIndex--;
-            this.moveCooldown = time + 200; // Temps de cooldown pour éviter les déplacements trop rapides
-        } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
-            this.currentPositionIndex++;
-            this.moveCooldown = time + 200;
+    if (moveCooldown < time) {
+        if (cursors.left.isDown && currentPositionIndex > 0) {
+            currentPositionIndex--;
+            moveCooldown = time + 200; // Temps de cooldown pour éviter les déplacements trop rapides
+        } else if (cursors.right.isDown && currentPositionIndex < positions.length - 1) {
+            currentPositionIndex++;
+            moveCooldown = time + 200;
         }
     }
 
@@ -104,24 +104,24 @@ update(time) {
     
     // Déplacement fluide vers la nouvelle position
     this.tweens.add({
-        targets: this.perso,
-        x: this.positions[this.currentPositionIndex],
+        targets: perso,
+        x: positions[currentPositionIndex],
         duration: 150,
         ease: 'Power2'
     });
 
     // Gestion du saut
-    if (this.cursors.up.isDown && !this.isJumping) {
-        this.isJumping = true;
-        this.perso.anims.play("anim_jump");
-        this.perso.setVelocityY(-200);
+    if (cursors.up.isDown && !isJumping) {
+        isJumping = true;
+        perso.anims.play("anim_jump");
+        perso.setVelocityY(-200);
     }
 
      // Vérifier si le perso touche le sol pour arrêter l'état de saut
-     if (this.perso.body.blocked.down || this.perso.body.touching.down) {
-        if (this.isJumping) {
-            this.isJumping = false;
-            this.perso.anims.play("anim_perso", true);
+     if (perso.body.blocked.down || perso.body.touching.down) {
+        if (isJumping) {
+            isJumping = false;
+            perso.anims.play("anim_perso", true);
         }
     }
 }
