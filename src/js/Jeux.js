@@ -39,7 +39,7 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 create() {
 
-    this.background = this.add.tileSprite(400, 300, 800, 600, "img_background");
+    this.background = this.add.tileSprite(400, 300, 800, 800, "img_background");
 
     perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
     perso.setCollideWorldBounds(true);
