@@ -45,24 +45,25 @@ create() {
     this.background = this.add.tileSprite(400,400, 400, 400, "img_background");
     this.background.setScale(3);
  // Ajouter 3 rails au centre de l'écran
- let railWidth = 64;  // Largeur de chaque rail
- let railHeight = 64; // Hauteur de chaque rail
- let centerX = 400;   // Position X centrale de la scène
- let centerY = 400;   // Position Y centrale de la scène
+    let railWidth = 64;  // Largeur de chaque rail
+    let railHeight = 64; // Hauteur de chaque rail
+    let centerX = 400;   // Position X centrale de la scène
+    let centerY = 400;   // Position Y centrale de la scène
 
- // Espacement entre les rails
- let spacing = 70; // Distance entre les rails, ajustable si nécessaire
+    // Espacement entre les rails
+    let spacing = 70; // Distance entre les rails, ajustable si nécessaire
 
- // Créer les 3 rails au centre de la scène
- for (let i = -1; i <= 1; i++) {
-     // Créer chaque rail, espacé de manière égale autour de la position centrale
-     this.add.image(centerX + (i * spacing), centerY, "img_rails").setOrigin(0.5, 0.5).setScale(1);
- }
+    // Créer les 3 rails au centre de la scène
+    for (let i = -1; i <= 1; i++) {
+        // Créer chaque rail, espacé de manière égale autour de la position centrale
+        this.add.image(centerX + (i * spacing), centerY, "img_rails").setOrigin(0.5, 0.5).setScale(1);
+    }
 
 
-    
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
+    perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
+    perso.setCollideWorldBounds(true);
     this.perso.setScale(2.5);
 
     // Création de l'animation de mouvement
@@ -93,7 +94,7 @@ update(time) {
     
     this.background.tilePositionY -= 2;
 
- 
+
    
  // Gestion des déplacements gauche/droite avec cooldown
  if (!this.isMoving && this.moveCooldown < time) {
