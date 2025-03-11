@@ -1,7 +1,7 @@
 
 // chargement des librairies
 import menu from "/src/js/menu.js";
-
+import jeux from "/src/js/Jeux.js";
 
 // configuration générale du jeu
 var config = {
@@ -21,7 +21,7 @@ var config = {
       debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
-  scene: [menu]
+  scene: [menu, jeux]
 };
 
 // création et lancement du jeu
