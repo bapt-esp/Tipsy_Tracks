@@ -11,7 +11,7 @@ export default class Barr {
         console.log("Nouvelle barrière à :", randomX); // Debug
     
         barriere.setScale(2.5);
-        barrieàre.setVelocityY(2); // Réduit la vitesse pour voir si ça fonctionne
+        barriere.setVelocityY(2); // Réduit la vitesse pour voir si ça fonctionne
         barriere.setImmovable(true);
         barriere.anims.play("anim_barriere");
     
