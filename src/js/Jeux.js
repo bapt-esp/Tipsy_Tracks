@@ -40,31 +40,21 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 
 create() {
-
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
     this.background = this.add.tileSprite(400, 400, 400, 400, "img_background");
     this.background.setScale(3);
- // Ajouter 3 rails au centre de l'écran
-    let railWidth = 120;  // Largeur de chaque rail
-    let railHeight = 120; // Hauteur de chaque rail
-    let centerX = 400;   // Position X centrale de la scène
-    let centerY = 400;   // Position Y centrale de la scène
 
- // Espacement entre les rails
-    let spacing = 70; // Distance entre les rails, ajustable si nécessaire
-
- // Créer les 3 rails au centre de la scène
-    for (let i = -1; i <= 1; i++) {
-     // Créer chaque rail, espacé de manière égale autour de la position centrale
-        this.add.image(centerX + (i * spacing), centerY, "img_rails").setOrigin(0.5, 0.5).setScale(1);
- }
-
-
+     // Création des trois rails indépendants aux positions 200, 400 et 600
+     for (let i = 0; i < 3; i++) {
+        let rail = this.add.tileSprite(this.positions[i], 580, 128, 500, "img_rails");
+        rail.setScale(2.5); // Ajustement de la hauteur
+        this.rails.push(rail); // Ajout dans le tableau pour mise à jour
+    }
     
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
-    this.perso.setScale(2);
+    this.perso.setScale(2.5);
 
     // Création de l'animation de mouvement
     this.anims.create({
