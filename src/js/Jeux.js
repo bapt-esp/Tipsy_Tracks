@@ -35,10 +35,10 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 create() {
 
-    sky = this.add.tileSprite(400, 300, 800, 600, "img_sky");
+    this.sky = this.add.tileSprite(400, 300, 800, 600, "img_sky");
 
-    perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
-    perso.setCollideWorldBounds(true);
+    this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
+    this.perso.setCollideWorldBounds(true);
 
     // Création de l'animation de mouvement
     this.anims.create({
@@ -57,11 +57,11 @@ create() {
     });
 
     // Lancer l'animation de base en boucle
-    perso.anims.play("anim_perso");
+    this.perso.anims.play("anim_perso");
 
-    cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.createCursorKeys();
 
-    barrière = this.physics.add.group();
+    this.barrière = this.physics.add.group();
 
     this.time.addEvent({
         delay: 1000,
@@ -70,23 +70,23 @@ create() {
         loop: true
     });
 
-    this.physics.add.collider(perso, barrière, hitObstacle, null, this);
+    this.physics.add.collider(this.perso, this.barrière, hitObstacle, null, this);
 
 }
 
 
 update(time) {
 
-    sky.tilePositionY -= 3;
+    this.sky.tilePositionY -= 3;
    
 
-    if (moveCooldown < time) {
-        if (cursors.left.isDown && currentPositionIndex > 0) {
-            currentPositionIndex--;
-            moveCooldown = time + 200; // Temps de cooldown pour éviter les déplacements trop rapides
-        } else if (cursors.right.isDown && currentPositionIndex < positions.length - 1) {
-            currentPositionIndex++;
-            moveCooldown = time + 200;
+    if (this.moveCooldown < time) {
+        if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
+            this.currentPositionIndex--;
+            this.moveCooldown = time + 200; // Temps de cooldown pour éviter les déplacements trop rapides
+        } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
+            this.currentPositionIndex++;
+            this.moveCooldown = time + 200;
         }
     }
 
@@ -100,24 +100,24 @@ update(time) {
     
     // Déplacement fluide vers la nouvelle position
     this.tweens.add({
-        targets: perso,
-        x: positions[currentPositionIndex],
+        targets: this.perso,
+        x: this.positions[this.currentPositionIndex],
         duration: 150,
         ease: 'Power2'
     });
 
     // Gestion du saut
-    if (cursors.up.isDown && !isJumping) {
-        isJumping = true;
-        perso.anims.play("anim_jump");
-        perso.setVelocityY(-200);
+    if (this.cursors.up.isDown && !this.isJumping) {
+        this.isJumping = true;
+        this.perso.anims.play("anim_jump");
+        this.perso.setVelocityY(-200);
     }
 
      // Vérifier si le perso touche le sol pour arrêter l'état de saut
-     if (perso.body.blocked.down || perso.body.touching.down) {
-        if (isJumping) {
-            isJumping = false;
-            perso.anims.play("anim_perso", true);
+     if (this.perso.body.blocked.down || this.perso.body.touching.down) {
+        if (this.isJumping) {
+            this.isJumping = false;
+            this.perso.anims.play("anim_perso", true);
         }
     }
 }
