@@ -61,8 +61,8 @@ create() {
 
 
     
-    perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
-    perso.setCollideWorldBounds(true);
+    this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
+    this.perso.setCollideWorldBounds(true);
     this.perso.setScale(2.5);
 
     // Création de l'animation de mouvement
