@@ -37,7 +37,7 @@ export default class selection extends Phaser.Scene {
    * ainsi que toutes les instructions permettant de planifier des evenements
    */
   create() {
-    this.fond = this.add.tileSprite(400, 300, 800, 600, "img_ciel");
+    this.fond = this.add.tileSprite(400, 300, 800, 800, "img_ciel");
 
     let playButton = this.add.image(400, 500, "img_bouton").setInteractive();
     playButton.on("pointerdown", () => {

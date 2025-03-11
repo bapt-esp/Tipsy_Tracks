@@ -41,7 +41,7 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 create() {
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
-    this.background = this.add.tileSprite(400,300, 800, 600, "img_background");
+    this.background = this.add.tileSprite(400,400, 400, 400, "img_background");
     this.background.setScale(3);
 
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
@@ -69,12 +69,10 @@ create() {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    
-
 }
 
 
-update() {
+update(time) {
     
     this.background.tilePositionY -= 2;
 
@@ -93,8 +91,6 @@ update() {
     }
 }    
    
-
-
     
     // Gestion du saut
     if (this.cursors.up.isDown && !this.isJumping) {
