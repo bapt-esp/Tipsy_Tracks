@@ -10,6 +10,7 @@ export default class jeux extends Phaser.Scene {
         this.moveCooldown = 0;
         this.positions = [200, 400, 600];
         this.currentPositionIndex = 1;
+        this.background = null;
     }
 
 
@@ -25,8 +26,9 @@ pour la gestion du personnage et du gameplay.*/
 
  preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 32, frameHeight: 32 });
-    this.load.image("img_sky", "src/assets/sky.png");
+    this.load.image("img_background", "src\assets\background.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
+    
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -35,7 +37,10 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 create() {
 
-    sky = this.add.tileSprite(400, 300, 800, 600, "img_sky");
+    
+
+    // permet de faire defilée l'arriere plan
+    background = this.add.tileSprite(400, 300, 800, 600, "img_background");
 
     perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
     perso.setCollideWorldBounds(true);
@@ -72,13 +77,14 @@ create() {
 
     this.physics.add.collider(perso, barrière, hitObstacle, null, this);
 
+    
 }
 
 
 update(time) {
 
-    sky.tilePositionY -= 3;
-   
+    //background.tilePositionY -= 3; // Fait défiler le background vers le bas
+    
 
     if (moveCooldown < time) {
         if (cursors.left.isDown && currentPositionIndex > 0) {
