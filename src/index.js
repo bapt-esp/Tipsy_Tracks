@@ -17,9 +17,10 @@ var config = {
     // définition des parametres physiques
     default: "arcade", // mode arcade : le plus simple : des rectangles pour gérer les collisions. Pas de pentes
     arcade: {
-
-      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
-    }
+      gravity: { y: 300 },
+      debug: false
+  }
+    
   },
   scene: [menu, jeux]
 };

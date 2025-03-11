@@ -11,6 +11,7 @@ export default class jeux extends Phaser.Scene {
         this.positions = [200, 400, 600];
         this.currentPositionIndex = 1;
         this.background = null;
+        this.isMoving = false;
     }
 
 
@@ -25,7 +26,7 @@ pour la gestion du personnage et du gameplay.*/
 (images et spritesheets) avant son démarrage.*/
 
  preload() {
-    this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 64, frameHeight: 64 });
     this.load.image("img_background", "src/assets/background.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 64});
@@ -41,113 +42,100 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 create() {
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
-    this.background = this.add.image(400, 400, "img_background");
+    this.background = this.add.tileSprite(400,400, 400, 400, "img_background");
     this.background.setScale(3);
+ // Ajouter 3 rails au centre de l'écran
+ let railWidth = 64;  // Largeur de chaque rail
+ let railHeight = 64; // Hauteur de chaque rail
+ let centerX = 400;   // Position X centrale de la scène
+ let centerY = 400;   // Position Y centrale de la scène
 
+ // Espacement entre les rails
+ let spacing = 70; // Distance entre les rails, ajustable si nécessaire
 
-
-    // Ajouter 3 rails au centre de l'écran
-    let railWidth = 64;  // Largeur de chaque rail
-    let railHeight = 64; // Hauteur de chaque rail
-    let centerX = 400;   // Position X centrale de la scène
-    let centerY = 400;   // Position Y centrale de la scène
-
-    // Espacement entre les rails
-    let spacing = 70; // Distance entre les rails, ajustable si nécessaire
-
-    // Créer les 3 rails au centre de la scène
-    for (let i = -1; i <= 1; i++) {
-        // Créer chaque rail, espacé de manière égale autour de la position centrale
-        this.add.image(centerX + (i * spacing), centerY, "img_rails").setOrigin(0.5, 0.5).setScale(1);
-    }
-
-
+ // Créer les 3 rails au centre de la scène
+ for (let i = -1; i <= 1; i++) {
+     // Créer chaque rail, espacé de manière égale autour de la position centrale
+     this.add.image(centerX + (i * spacing), centerY, "img_rails").setOrigin(0.5, 0.5).setScale(1);
+ }
 
 
     
-
     perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
     perso.setCollideWorldBounds(true);
+    this.perso.setScale(2.5);
 
     // Création de l'animation de mouvement
     this.anims.create({
         key: "anim_perso",
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 1 }),
-        frameRate: 10,
+        frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 8 }),
+        frameRate: 12,
         repeat: -1
     });
 
     // Création de l'animation de saut
     this.anims.create({
         key: "anim_jump",
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 2, end: 5 }),
-        frameRate: 3,
+        frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
+        frameRate: 7,
         repeat: 0
     });
 
     // Lancer l'animation de base en boucle
-    perso.anims.play("anim_perso");
+    this.perso.anims.play("anim_perso");
 
-    cursors = this.input.keyboard.createCursorKeys();
-
-    barrière = this.physics.add.group();
-
-    this.time.addEvent({
-        delay: 1000,
-        callback: generateObstacle,
-        callbackScope: this,
-        loop: true
-    });
-
-    this.physics.add.collider(perso, barrière, hitObstacle, null, this);
+    this.cursors = this.input.keyboard.createCursorKeys();
 
 }
 
 
 update(time) {
-
-    sky.tilePositionY -= 3;
-   
-
-    if (moveCooldown < time) {
-        if (cursors.left.isDown && currentPositionIndex > 0) {
-            currentPositionIndex--;
-            moveCooldown = time + 200; // Temps de cooldown pour éviter les déplacements trop rapides
-        } else if (cursors.right.isDown && currentPositionIndex < positions.length - 1) {
-            currentPositionIndex++;
-            moveCooldown = time + 200;
-        }
-    }
-
-    // Déplacer les obstacles verticalement
-    obstacles.getChildren().forEach(obstacle => {
-        obstacle.y += 2;
-        if (obstacle.y >= 600) {
-            obstacle.destroy();
-        }
-    });
     
-    // Déplacement fluide vers la nouvelle position
-    this.tweens.add({
-        targets: perso,
-        x: positions[currentPositionIndex],
-        duration: 150,
-        ease: 'Power2'
-    });
+    this.background.tilePositionY -= 2;
 
+    //sky.tilePositionY -= 3;
+   
+ // Gestion des déplacements gauche/droite avec cooldown
+ if (!this.isMoving && this.moveCooldown < time) {
+    if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
+        this.currentPositionIndex--;
+        this.moveCharacter();
+        this.moveCooldown = time + 200; // Appliquer un cooldown
+    } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
+        this.currentPositionIndex++;
+        this.moveCharacter();
+        this.moveCooldown = time + 200;
+    }
+}    
+   
+    
     // Gestion du saut
-    if (cursors.up.isDown && !isJumping) {
-        isJumping = true;
-        perso.anims.play("anim_jump");
-        perso.setVelocityY(-200);
+    if (this.cursors.up.isDown && !this.isJumping) {
+        this.isJumping = true;
+        this.perso.anims.play("anim_jump");
+        this.perso.setVelocityY(-300); // Impulsion du saut
     }
 
-     // Vérifier si le perso touche le sol pour arrêter l'état de saut
-     if (perso.body.blocked.down || perso.body.touching.down) {
-        if (isJumping) {
-            isJumping = false;
-            perso.anims.play("anim_perso", true);
+    // Vérifier si le personnage touche le sol
+    if (this.perso.body.blocked.down || this.perso.body.onFloor()) {
+        if (this.isJumping) {
+            this.isJumping = false;
+            this.perso.anims.play("anim_perso", true);
         }
     }
+}
+
+moveCharacter() {
+    this.isMoving = true;
+
+    this.tweens.add({
+        targets: this.perso,
+        x: this.positions[this.currentPositionIndex],
+        duration: 150,
+        ease: 'Power2',
+        onComplete: () => {
+            this.isMoving = false;
+        }
+    });
 }
 }
