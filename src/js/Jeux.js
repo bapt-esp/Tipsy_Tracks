@@ -11,6 +11,7 @@ export default class jeux extends Phaser.Scene {
         this.positions = [200, 400, 600];
         this.currentPositionIndex = 1;
         this.background = null;
+        this.isMoving = false;
     }
 
 
@@ -59,7 +60,7 @@ create() {
     this.anims.create({
         key: "anim_jump",
         frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
-        frameRate: 3,
+        frameRate: 7,
         repeat: 0
     });
 
@@ -68,16 +69,7 @@ create() {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.barrière = this.physics.add.group();
-
-    this.time.addEvent({
-        delay: 1000,
-        callback: generateObstacle,
-        callbackScope: this,
-        loop: true
-    });
-
-    this.physics.add.collider(this.perso, this.barrière, hitObstacle, null, this);
+    
 
 }
 
@@ -88,46 +80,49 @@ update(time) {
 
     //sky.tilePositionY -= 3;
    
-    
-    if (this.moveCooldown < time) {
-        if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
-            this.currentPositionIndex--;
-            this.moveCooldown = time + 200; // Temps de cooldown pour éviter les déplacements trop rapides
-        } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
-            this.currentPositionIndex++;
-            this.moveCooldown = time + 200;
-        }
+ // Gestion des déplacements gauche/droite avec cooldown
+ if (!this.isMoving && this.moveCooldown < time) {
+    if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
+        this.currentPositionIndex--;
+        this.moveCharacter();
+        this.moveCooldown = time + 200; // Appliquer un cooldown
+    } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
+        this.currentPositionIndex++;
+        this.moveCharacter();
+        this.moveCooldown = time + 200;
     }
+}    
+   
 
-    // Déplacer les obstacles verticalement
-    obstacles.getChildren().forEach(obstacle => {
-        obstacle.y += 2;
-        if (obstacle.y >= 600) {
-            obstacle.destroy();
-        }
-    });
+
     
-    // Déplacement fluide vers la nouvelle position
-    this.tweens.add({
-        targets: this.perso,
-        x: this.positions[this.currentPositionIndex],
-        duration: 150,
-        ease: 'Power2'
-    });
-
     // Gestion du saut
     if (this.cursors.up.isDown && !this.isJumping) {
         this.isJumping = true;
         this.perso.anims.play("anim_jump");
-        this.perso.setVelocityY(-300); // Augmenté pour un meilleur effet
+        this.perso.setVelocityY(-300); // Impulsion du saut
     }
 
-     // Vérifier si le perso touche le sol pour arrêter l'état de saut
-     if (this.perso.body.blocked.down || this.perso.body.touching.down) {
+    // Vérifier si le personnage touche le sol
+    if (this.perso.body.blocked.down || this.perso.body.onFloor()) {
         if (this.isJumping) {
             this.isJumping = false;
             this.perso.anims.play("anim_perso", true);
         }
     }
 }
-} 
+
+moveCharacter() {
+    this.isMoving = true;
+
+    this.tweens.add({
+        targets: this.perso,
+        x: this.positions[this.currentPositionIndex],
+        duration: 150,
+        ease: 'Power2',
+        onComplete: () => {
+            this.isMoving = false;
+        }
+    });
+}
+}
