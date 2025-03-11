@@ -3,7 +3,7 @@ export default class jeux extends Phaser.Scene {
     constructor() {
         super({ key: "jeux" });
         this.perso = null;
-        this.sky = null;
+        this.rails = []; //création d'un tableau pour stocker les 3 rails.
         this.barrière = null;
         this.cursors = null;
         this.isJumping = false;
@@ -21,7 +21,6 @@ pour la gestion du personnage et du gameplay.*/
 
 
 
-
 /*Cette fonction charge les ressources du jeu 
 (images et spritesheets) avant son démarrage.*/
 
@@ -33,6 +32,7 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
     this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 16, frameHeight: 16});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
+    
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -44,22 +44,13 @@ create() {
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
     this.background = this.add.tileSprite(400,400, 400, 400, "img_background");
     this.background.setScale(3);
- // Ajouter 3 rails au centre de l'écran
-    let railWidth = 120;  // Largeur de chaque rail
-    let railHeight = 120; // Hauteur de chaque rail
-    let centerX = 400;   // Position X centrale de la scène
-    let centerY = 400;   // Position Y centrale de la scène
 
- // Espacement entre les rails
-    let spacing = 70; // Distance entre les rails, ajustable si nécessaire
-
- // Créer les 3 rails au centre de la scène
-    for (let i = -1; i <= 1; i++) {
-     // Créer chaque rail, espacé de manière égale autour de la position centrale
-        this.add.image(centerX + (i * spacing), centerY, "img_rails").setOrigin(0.5, 0.5).setScale(1);
- }
-
-
+     // Création des trois rails indépendants aux positions 200, 400 et 600
+     for (let i = 0; i < 3; i++) {
+        let rail = this.add.tileSprite(this.positions[i], 580, 128, 500, "img_rails");
+        rail.setScale(2.5); // Ajustement de la hauteur
+        this.rails.push(rail); // Ajout dans le tableau pour mise à jour
+    }
     
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
@@ -92,6 +83,7 @@ create() {
 update(time) {
     
     this.background.tilePositionY -= 1;
+    this.rails.forEach(rail => rail.tilePositionY -= 1); // Faire défiler chaque rail
 
     //sky.tilePositionY -= 3;
    
