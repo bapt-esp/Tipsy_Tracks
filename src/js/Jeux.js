@@ -1,49 +1,29 @@
 
-/*  Initialisation des paramètres du jeu, notamment :
-
-Le mode de rendu (Phaser.AUTO )
-La taille de l'écran de jeu (800 x 600 pixels)
-Le moteur physique (Arcade Physics)
-Les différentes phases du jeu (preload, create, update*/
-
-var config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    physics: {
-        default: "arcade",
-        arcade: {
-            gravity: { y: 300 },
-            debug: false
-        }
-    },
-    scene: {
-        preload: preload,
-        create: create,
-        update: update,
+export default class jeux extends Phaser.Scene {
+    constructor() {
+        super({ key: "jeux" });
+        this.perso = null;
+        this.sky = null;
+        this.barrière = null;
+        this.cursors = null;
+        this.isJumping = false;
+        this.moveCooldown = 0;
+        this.positions = [200, 400, 600];
+        this.currentPositionIndex = 1;
     }
-};
 
-/*Ce morceau de code initialise le jeu avec Phaser 
+
+/*Ce morceau de code relie le jeu à index
 et définit plusieurs variables qui seront utilisées 
 pour la gestion du personnage et du gameplay.*/
 
-var game = new Phaser.Game(config);
-var perso;
-var sky;
-var barrière;
-var cursors;
-var isJumping = false;
-var moveCooldown = 0;
 
-// Positions autorisées sur X
-const positions = [200, 400, 600];
-let currentPositionIndex = 1; // Départ au centre
+
 
 /*Cette fonction charge les ressources du jeu 
 (images et spritesheets) avant son démarrage.*/
 
-function preload() {
+ preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 32, frameHeight: 32 });
     this.load.image("img_sky", "src/assets/sky.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
@@ -53,7 +33,7 @@ function preload() {
 Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 
-function create() {
+create() {
 
     sky = this.add.tileSprite(400, 300, 800, 600, "img_sky");
 
@@ -95,7 +75,7 @@ function create() {
 }
 
 
-function update(time) {
+update(time) {
 
     sky.tilePositionY -= 3;
    
@@ -140,4 +120,5 @@ function update(time) {
             perso.anims.play("anim_perso", true);
         }
     }
+}
 }

@@ -1,4 +1,4 @@
-import * as fct from "/src/js/fonctions.js";
+
 
 /***********************************************************************/
 /** VARIABLES GLOBALES 
@@ -41,7 +41,7 @@ export default class selection extends Phaser.Scene {
 
     let playButton = this.add.image(400, 500, "img_bouton").setInteractive();
     playButton.on("pointerdown", () => {
-        this.scene.start("GameScene");
+        this.scene.start("Jeux");
     });
 }
   
