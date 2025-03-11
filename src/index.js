@@ -1,7 +1,7 @@
 
 // chargement des librairies
 import menu from "/src/js/menu.js";
-import jeux from "src/js/Jeux.js";
+import jeux from "/src/js/Jeux.js";
 
 // configuration générale du jeu
 var config = {
