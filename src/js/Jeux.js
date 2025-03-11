@@ -40,6 +40,7 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 
 create() {
+
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
     this.background = this.add.tileSprite(400,400, 400, 400, "img_background");
@@ -60,10 +61,43 @@ create() {
  }
 
 
+
+
+
+    this.barrière = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_barrière");
+    this.barrière.setCollideWorldBounds(true);
+    this.barrière.setScale(2.5);
+
+    // Création de l'animation de mouvement
+    this.anims.create({
+        key: "anim_barrière",
+        frames: this.anims.generateFrameNumbers("img_barrière", { start: 0, end: 8 }),
+        frameRate: 12,
+        repeat: -1
+    });
+
+      // Création de l'animation de saut
+      this.anims.create({
+        key: "anim_jump",
+        frames: this.anims.generateFrameNumbers("img_barrière", { start: 0, end: 3 }),
+        frameRate: 1,
+        repeat: -1
+    });
+
+
+    // Lancer l'animation de base en boucle
+    this.barrière.anims.play("anim_barrière");
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+
+
+
+
+
     
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
-    this.perso.setScale(2.5);
+    this.perso.setScale(2);
 
     // Création de l'animation de mouvement
     this.anims.create({
