@@ -52,51 +52,16 @@ create() {
         rail.setScale(2.5); // Ajustement de la hauteur
         this.rails.push(rail); // Ajout dans le tableau pour mise à jour
     }
-<<<<<<< HEAD
-=======
     
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    this.barrière = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_barrière");
-    this.barrière.setCollideWorldBounds(true);
-    this.barrière.setScale(2.5);
-
     // Création de l'animation de mouvement
     this.anims.create({
-        key: "anim_barrière",
-        frames: this.anims.generateFrameNumbers("img_barrière", { start: 0, end: 3 }),
+        key: "anim_barriere",
+        frames: this.anims.generateFrameNumbers("img_barriere", { start: 0, end: 3 }),
         frameRate: 5,
         repeat: -1
     });
-
-
-    // Lancer l'animation de base en boucle
-    this.barrière.anims.play("anim_barrière");
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-
-
-
-  
-
-
 
 
     this.bouteille = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_bouteille");
@@ -114,16 +79,6 @@ create() {
     // Lancer l'animation de base en boucle
     this.bouteille.anims.play("anim_bouteille");
 
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-
-
-
-
-
-
-
-
 
     this.piece = this.physics.add.sprite(this.positions[this.currentPositionIndex], 200, "img_piece");
     this.piece.setCollideWorldBounds(true);
@@ -139,17 +94,6 @@ create() {
 
     // Lancer l'animation de base en boucle
     this.piece.anims.play("anim_piece");
-
-    this.cursors = this.input.keyboard.createCursorKeys();
-
- 
-
-
-
-
-
->>>>>>> 6fa0b1f551b9cc4104a8661499a6fbb1f3a77e9f
-
 
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
@@ -185,44 +129,12 @@ create() {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-<<<<<<< HEAD
     this.barriereGroup = this.physics.add.group(); // Groupe pour gérer plusieurs barrières
     this.spawnBarriere(); // Crée une première barrière
 
     // Collision entre le perso et les barrières
     this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
   
-=======
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
->>>>>>> 6fa0b1f551b9cc4104a8661499a6fbb1f3a77e9f
 }
 
 
@@ -284,7 +196,7 @@ update(time) {
 }
 
 moveCharacter() {
-    console.log("Déplacement vers :", this.positions[this.currentPositionIndex]); // Debug
+    console.log("Deplacement vers :", this.positions[this.currentPositionIndex]); // Debug
     this.isMoving = true;
 
     this.tweens.add({
@@ -293,7 +205,7 @@ moveCharacter() {
         duration: 150,
         ease: 'Power2',
         onComplete: () => {
-            console.log("Déplacement terminé"); // Debug
+            console.log("Deplacement termine"); // Debug
             this.isMoving = false;
         }
     });
