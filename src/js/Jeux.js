@@ -10,7 +10,7 @@ export default class jeux extends Phaser.Scene {
         this.moveCooldown = 0;
         this.positions = [200, 400, 600];
         this.currentPositionIndex = 1;
-        this.background
+        this.background = null;
     }
 
 
@@ -26,7 +26,7 @@ pour la gestion du personnage et du gameplay.*/
 
  preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 32, frameHeight: 32 });
-    this.load.image("img_background", "src\assets\background.png");
+    this.load.image("img_background", "src/assets/background.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
@@ -39,7 +39,7 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 create() {
 
-    this.sky = this.add.tileSprite(400, 300, 800, 600, "img_ciel");
+    this.background = this.add.tileSprite(400, 300, 800, 600, "img_background");
 
     perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
     perso.setCollideWorldBounds(true);
