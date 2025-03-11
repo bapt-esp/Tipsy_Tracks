@@ -30,7 +30,7 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_piece","src/assets/piece(2).png",{frameWidth: 16, frameHeight: 16});
-    this.load.spritesheet("img_bouteille","src/assetes/boutille.png",{frameWidth: 16, frameHeight: 16});
+    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 16, frameHeight: 16});
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -38,9 +38,10 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 
 
 create() {
-
-    this.background = this.add.tileSprite(400, 300, 800, 800, "img_background");
-
+/*A modifier à la fin si besoin. refaire le fond en 800x800
+    avec une fenetre de 800x800 et une bande de terre de 600 de large*/
+    this.background = this.add.image(400, 400, "img_background");
+    this.background.setScale(3);
     perso = this.physics.add.sprite(positions[currentPositionIndex], 500, "img_perso");
     perso.setCollideWorldBounds(true);
 
