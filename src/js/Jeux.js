@@ -45,12 +45,13 @@ create() {
 
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
+    this.perso.setScale(2.5);
 
     // Création de l'animation de mouvement
     this.anims.create({
         key: "anim_perso",
         frames: this.anims.generateFrameNumbers("img_perso", { start: 0, end: 8 }),
-        frameRate: 10,
+        frameRate: 12,
         repeat: -1
     });
 
@@ -92,7 +93,7 @@ update(time) {
         if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
             this.currentPositionIndex--;
             this.moveCooldown = time + 200; // Temps de cooldown pour éviter les déplacements trop rapides
-        } else if (this.cursors.right.isDown && this.currentPositionIndex < positions.length - 1) {
+        } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
             this.currentPositionIndex++;
             this.moveCooldown = time + 200;
         }
@@ -109,16 +110,16 @@ update(time) {
     // Déplacement fluide vers la nouvelle position
     this.tweens.add({
         targets: this.perso,
-        x: positions[this.background.currentPositionIndex],
+        x: this.positions[this.currentPositionIndex],
         duration: 150,
         ease: 'Power2'
     });
 
     // Gestion du saut
-    if (cursors.up.isDown && !this.isJumping) {
+    if (this.cursors.up.isDown && !this.isJumping) {
         this.isJumping = true;
         this.perso.anims.play("anim_jump");
-        this.perso.setVelocityY(-200);
+        this.perso.setVelocityY(-300); // Augmenté pour un meilleur effet
     }
 
      // Vérifier si le perso touche le sol pour arrêter l'état de saut
