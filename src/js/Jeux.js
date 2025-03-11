@@ -52,6 +52,46 @@ create() {
         this.rails.push(rail); // Ajout dans le tableau pour mise à jour
     }
     
+
+
+
+
+
+
+    this.barrière = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_barrière");
+    this.barrière.setCollideWorldBounds(true);
+    this.barrière.setScale(2.5);
+
+    // Création de l'animation de mouvement
+    this.anims.create({
+        key: "anim_barrière",
+        frames: this.anims.generateFrameNumbers("img_barrière", { start: 0, end: 3 }),
+        frameRate: 5,
+        repeat: -1
+    });
+
+    
+
+    // Lancer l'animation de base en boucle
+    this.barrière.anims.play("anim_barrière");
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
     this.perso.setScale(2.5);
