@@ -26,7 +26,7 @@ pour la gestion du personnage et du gameplay.*/
 
  preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 32, frameHeight: 32 });
-    this.load.image("img_background", "src\assets\background.png");
+    this.load.image("img_background", "src/assets/background.png");
     this.load.spritesheet("img_barrière", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     
 }
