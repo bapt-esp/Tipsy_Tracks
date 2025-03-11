@@ -41,7 +41,7 @@ export default class selection extends Phaser.Scene {
 
     let playButton = this.add.image(400, 500, "img_bouton").setInteractive();
     playButton.on("pointerdown", () => {
-        this.scene.start("Jeux");
+        this.scene.start("jeux");
     });
 }
   
