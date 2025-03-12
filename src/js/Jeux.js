@@ -121,7 +121,7 @@ create() {
     // Ajuster la hitbox du personnage
     this.perso.body.setSize(30, 55); // Ajustez ces valeurs selon la taille réelle de votre personnage
     this.perso.body.setOffset(20, 45); // Ajustez ces valeurs pour centrer la hitbox sur votre personnage
-    this.perso.setDepth(10);
+    this.perso.setDepth(8);
 
     // Création de l'animation de mouvement
     this.anims.create({
@@ -422,12 +422,15 @@ gameOver() {
         fill: '#ff0000',
         fontStyle: 'bold',
         align: 'center'
+        
     }).setOrigin(0.5);
+    gameOverText.setDepth(10);
 
     // Créer le bouton "Rejouer"
     let replayButton = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 100, "img_boutton_rejouer");
     replayButton.setScale(2); // Ajuste l'échelle du bouton
     replayButton.setInteractive(); // Rendre le bouton interactif
+    replayButton.setDepth(10);
 
     // Ajouter l'événement pour le bouton "Rejouer"
     replayButton.on('pointerdown', () => {
@@ -438,6 +441,7 @@ gameOver() {
     let quitButton = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 200, "img_boutton_quitter");
     quitButton.setScale(2); // Ajuste l'échelle du bouton
     quitButton.setInteractive(); // Rendre le bouton interactif
+    quitButton.setDepth(10);
 
     // Ajouter l'événement pour le bouton "Quitter"
     quitButton.on('pointerdown', () => {
