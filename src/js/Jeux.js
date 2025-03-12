@@ -142,7 +142,7 @@ create() {
     this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
     this.physics.add.overlap(this.perso, this.trainGroup, this.gameOver, null, this);
     this.physics.add.overlap(this.perso, this.pieceGroup, this.PickUpObjects, null, this);
-    this.physics.add.overlap(this.perso, this.bottleGroup, this.PickUpObjects, null, this);
+    this.physics.add.overlap(this.perso, this.bouteilleGroup, this.PickUpObjects, null, this);
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -205,18 +205,21 @@ update(time) {
             let row = this.currentMap[this.currentMapRow];
             for (let i = 0; i < row.length; i++) {
                 let element = row[i];
-                let xPosition = this.positions[i];
+                let xPosition = this.positions[i]; // Définition de xPosition ici
+                let obj;
                 if (element === "barriere") {
                     let barriere = this.physics.add.sprite(xPosition, -50, "img_barriere");
                     barriere.setScale(2.5);
                     barriere.play("anim_barriere");
                     this.barriereGroup.add(barriere);
                     barriere.tilePositionY = 0;
+                    obj = barriere;
                 } else if (element === "train") {
                     let train = this.physics.add.sprite(xPosition, -100, "img_train");
                     train.setScale(2.5);
                     this.trainGroup.add(train);
                     train.tilePositionY = 0;
+                    obj = train;
                 } else if (element === "piece") {
                     let piece = this.physics.add.sprite(xPosition, -50, "img_piece");
                     piece.setScale(1.5);
@@ -224,6 +227,7 @@ update(time) {
                     this.pieceGroup.add(piece);
                     piece.tilePositionY = 0;
                     piece.body.allowGravity = false;
+                    obj = piece;
                 } else if (element === "bouteille") {
                     let bouteille = this.physics.add.sprite(xPosition, -50, "img_bouteille");
                     bouteille.setScale(1.5);
@@ -231,6 +235,11 @@ update(time) {
                     this.bouteilleGroup.add(bouteille);
                     bouteille.tilePositionY = 0;
                     bouteille.body.allowGravity = false;
+                    obj = bouteille;
+                }
+    
+                if (obj) {
+                    this.lastObjY = obj.y;
                 }
             }
             this.currentMapRow++;
@@ -243,55 +252,57 @@ update(time) {
 
     // Défilement des barrières
     this.barriereGroup.getChildren().forEach(barriere => {
-        barriere.tilePositionY += 1.2;
-        barriere.y = barriere.tilePositionY;
-        if (barriere.y > 800) {
-            barriere.anims.stop();
-            barriere.destroy();
-        }
-    });
+    barriere.tilePositionY += 1.2;
+    barriere.y = barriere.tilePositionY; 
+    if (barriere.y > 800) {
+        barriere.anims.stop();
+        barriere.destroy();
+    }
+});
 
     // Défilement des trains
     this.trainGroup.getChildren().forEach(train => {
-        train.tilePositionY += 1.2;
-        train.y = train.tilePositionY;
-        if (train.y > 800) {
-            train.anims.stop();
-            train.destroy();
-        }
-    });
+    train.tilePositionY += 1.2;
+    train.y = train.tilePositionY; 
+    if (train.y > 800) {
+        train.anims.stop();
+        train.destroy();
+    }
+});
 
-    //Défilement des pièces
+    // Défilement des pièces
     this.pieceGroup.getChildren().forEach(piece => {
-        piece.tilePositionY += 1.2;
-        if (piece.tilePositionY > 800) {
-            piece.anims.stop();
-            piece.destroy();
-        }
-    });
+    piece.tilePositionY += 1.2;
+    piece.y = piece.tilePositionY; 
+    if (piece.y > 800) {
+        piece.anims.stop();
+        piece.destroy();
+    }
+});
 
     // Défilement des bouteilles
     this.bouteilleGroup.getChildren().forEach(bouteille => {
-        bouteille.tilePositionY += 1.2;
-        if (bouteille.tilePositionY > 800) {
-            bouteille.anims.stop();
-            bouteille.destroy();
-        }
-    });
+    bouteille.tilePositionY += 1.2;
+    bouteille.y = bouteille.tilePositionY; 
+    if (bouteille.y > 800) {
+        bouteille.anims.stop();
+        bouteille.destroy();
+    }
+});
 
    
- // Gestion des déplacements gauche/droite avec cooldown
- if (!this.isMoving && this.moveCooldown < time) {
-    if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
-        this.currentPositionIndex--;
-        this.moveCharacter();
-        this.moveCooldown = time + 200;
-    } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
-        this.currentPositionIndex++;
-        this.moveCharacter();
-        this.moveCooldown = time + 200;
+    // Gestion des déplacements gauche/droite avec cooldown
+    if (!this.isMoving && this.moveCooldown < time) {
+        if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
+            this.currentPositionIndex--;
+            this.moveCharacter();
+            this.moveCooldown = time + 200;
+        } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
+            this.currentPositionIndex++;
+            this.moveCharacter();
+            this.moveCooldown = time + 200;
+        }
     }
- }
     
     // Gestion du saut
     if (this.cursors.up.isDown && !this.isJumping && this.perso.body.blocked.down) { // Ajout de la vérification du sol
@@ -380,6 +391,21 @@ gameOver() {
     this.physics.pause(); // Met le jeu en pause
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
+
+    // Afficher le texte "GAME OVER" au centre de l'écran
+    let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'GAME OVER', {
+        fontSize: '64px',
+        fill: '#ff0000',
+        fontStyle: 'bold',
+        align: 'center'
+    }).setOrigin(0.5);
+
+    // Désactive toutes les entrées pour empêcher les actions après la fin du jeu
+    this.input.enabled = false; 
+
+    // Arrêter la scène pour bloquer toute mise à jour
+    this.scene.pause(); 
+
     console.log("Game Over !");
 }
 
