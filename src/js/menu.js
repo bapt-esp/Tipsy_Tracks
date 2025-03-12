@@ -5,8 +5,8 @@
 /***********************************************************************/
 
 
-// définition de la classe "selection"
-export default class selection extends Phaser.Scene {
+// définition de la classe "menu"
+export default class menu extends Phaser.Scene {
   constructor() {
     super({ key: "menu" }); // mettre le meme nom que le nom de la classe
   }
@@ -46,9 +46,9 @@ export default class selection extends Phaser.Scene {
     });
 
     
-    let playButton_help = this.add.image(75, 50, "img_bouttonhelp").setInteractive();
-    playButton.on("pointerdown", () => {
-        this.scene.start("bouttonhelp");
+    let playButtonhelp = this.add.image(75, 50, "img_bouttonhelp").setInteractive();
+    playButtonhelp.on("pointerdown", () => {
+        this.scene.start("help");
     });
 
     this.title= this.add.image(400,100, "img_title");

@@ -2,6 +2,7 @@
 // chargement des librairies
 import menu from "/src/js/menu.js";
 import jeux from "/src/js/Jeux.js";
+import help from "/src/js/helps.js";
 
 // configuration générale du jeu
 var config = {
@@ -22,7 +23,7 @@ var config = {
   }
     
   },
-  scene: [menu, jeux]
+  scene: [menu, jeux, help]
 };
 
 // création et lancement du jeu
