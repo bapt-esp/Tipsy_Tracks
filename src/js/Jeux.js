@@ -422,7 +422,6 @@ gameOver() {
         fill: '#ff0000',
         fontStyle: 'bold',
         align: 'center'
-        
     }).setOrigin(0.5);
     gameOverText.setDepth(10);
 
@@ -434,7 +433,7 @@ gameOver() {
 
     // Ajouter l'événement pour le bouton "Rejouer"
     replayButton.on('pointerdown', () => {
-        this.restartGame(); // Appeler la fonction pour redémarrer le jeu
+        this.scene.start("jeux"); // Relance la scène du jeu
     });
 
     // Créer le bouton "Quitter"
@@ -445,20 +444,14 @@ gameOver() {
 
     // Ajouter l'événement pour le bouton "Quitter"
     quitButton.on('pointerdown', () => {
-        this.quitGame(); // Appeler la fonction pour quitter le jeu
+        this.scene.start("menu"); // Retourne au menu principal
     });
-
-    // Désactiver toutes les entrées pour empêcher toute action après la fin du jeu
-    this.input.enabled = false;
-
-    // Arrêter la scène pour bloquer toute mise à jour
-    this.scene.pause(); 
 
     console.log("Game Over !");
 }
 
 
-
-
-
 }
+
+
+
