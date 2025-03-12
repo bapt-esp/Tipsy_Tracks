@@ -211,8 +211,7 @@ update(time) {
                     barriere.tilePositionY = 0;
                     obj = barriere;
                     // Ajuster la hitbox de la barrière
-                    barriere.body.setSize(64, 32); // Ajustez ces valeurs selon la taille réelle de votre barrière
-                    barriere.body.setOffset(24, 12); // Ajustez ces valeurs pour centrer la hitbox sur votre barrière
+                    barriere.body.setOffset(12, 12); // Ajustez ces valeurs pour centrer la hitbox sur votre barrière
                     barriere.setDepth(3);
                 } else if (element === "train") {
                     let train = this.physics.add.sprite(xPosition, -150, "img_train");
@@ -220,8 +219,7 @@ update(time) {
                     this.trainGroup.add(train);
                     train.tilePositionY = 0;
                     obj = train;
-                    train.body.setSize(64, 174); // Ajustez ces valeurs selon la taille réelle du train
-                    train.body.setOffset(24, 6); // Ajustez ces valeurs pour centrer la hitbox du train
+                    train.body.setOffset(12, 6); // Ajustez ces valeurs pour centrer la hitbox du train
                     train.setDepth(3);
                 } else if (element === "piece") {
                     let piece = this.physics.add.sprite(xPosition, -50, "img_piece");
@@ -232,6 +230,7 @@ update(time) {
                     piece.body.allowGravity = false;
                     obj = piece;
                     piece.setDepth(6);
+                    piece.body.setOffset(18,28);
                 } else if (element === "bouteille") {
                     let bouteille = this.physics.add.sprite(xPosition, -50, "img_bouteille");
                     bouteille.setScale(1.5);
@@ -241,6 +240,7 @@ update(time) {
                     bouteille.body.allowGravity = false;
                     obj = bouteille;
                     bouteille.setDepth(6);
+                    bouteille.body.setOffset(18, 28); // Ajustez ces valeurs pour centrer la hitbox du train
                 }
     
                 if (obj) {
@@ -255,15 +255,19 @@ update(time) {
         }
     }
 
-    // Défilement des barrières
     this.barriereGroup.getChildren().forEach(barriere => {
-    barriere.tilePositionY += 1.2;
-    barriere.y = barriere.tilePositionY; 
-    if (barriere.y > 800) {
-        barriere.anims.stop();
-        barriere.destroy();
+        barriere.tilePositionY += 1.2;
+        barriere.y = barriere.tilePositionY;
+        if (barriere.y > 800) {
+            barriere.anims.stop();
+            barriere.destroy();
+        }
+    });
+
+    // Gestion des collisions avec les barrières
+    if (!this.isJumpingOverBarrier) {
+        this.physics.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
     }
-});
 
     // Défilement des trains
     this.trainGroup.getChildren().forEach(train => {
@@ -389,20 +393,29 @@ PickUpObjects(perso, objet) {
     // Ajouter d'autres actions si nécessaire (effets visuels, sonores, etc.)
 }
 
+
 jumpOverBarrier() {
-    // Vérifie si le personnage est au sol et si la touche de saut est pressée
-    if (this.perso.body.bottom >= 550 && this.cursors.up.isDown) { // Ajustez 550 en fonction de la position y de votre sol
-        // Désactive la collision avec les barrières
-        this.physics.world.removeCollider(this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this));
+    // Vérifie si le personnage est au sol, si la touche de saut est pressée et si le personnage est sur la même ligne que la barrière
+    if (this.perso.body.bottom >= 550 && this.cursors.up.isDown && this.isCharacterOnSameLaneAsBarrier() && !this.isJumpingOverBarrier) {
+        this.isJumpingOverBarrier = true; // Définir le drapeau de saut
 
-        // Applique une impulsion verticale pour simuler le saut
-        this.perso.setVelocityY(-300);
+        // Applique une impulsion verticale plus élevée pour simuler le saut au-dessus de la barrière
+        this.perso.setVelocityY(-400);
 
-        // Réactive la collision après un délai (par exemple, 500 ms)
-        this.time.delayedCall(500, () => {
-            this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
+        // Réinitialiser le drapeau de saut après un délai (par exemple, 700 ms)
+        this.time.delayedCall(700, () => {
+            this.isJumpingOverBarrier = false;
         });
     }
+}
+
+isCharacterOnSameLaneAsBarrier() {
+    let characterLane = this.currentPositionIndex;
+    let closestBarrier = this.barriereGroup.getChildren().find(barrier => {
+        return Math.abs(barrier.x - this.positions[characterLane]) < 100; // Ajustez la tolérance si nécessaire
+    });
+
+    return !!closestBarrier;
 }
 
 generateMap() {
