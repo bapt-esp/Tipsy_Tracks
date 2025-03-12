@@ -2,7 +2,6 @@
 export default class jeux extends Phaser.Scene {
     constructor() {
         super({ key: "jeux" });
-        this.Barr = null; // Instance de la classe Fonction
         this.perso = null;
         this.rails = []; //création d'un tableau pour stocker les 3 rails.
         this.barriere = null;
@@ -14,7 +13,7 @@ export default class jeux extends Phaser.Scene {
         this.background = null;
         this.isMoving = false;
         this.occupiedPositions = [];
-        this.patterns = [];
+        this.maps = [];
     }
 
 
@@ -32,8 +31,8 @@ pour la gestion du personnage et du gameplay.*/
     this.load.image("img_background", "src/assets/background.png");
     this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 174});
-    //this.load.spritesheet("img_piece","src/assets/piece.png",{frameWidth: 64, frameHeight: 64});
-    //this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 64, frameHeight: 64});
+    this.load.spritesheet("img_piece","src/assets/piece.png",{frameWidth: 64, frameHeight: 64});
+    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 64, frameHeight: 64});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     
 }
@@ -67,6 +66,12 @@ create() {
     //On crée un grp de barrières et de train pour qu'il puisse y en avoir plusieurs qui apparaîssent.
     this.barriereGroup = this.physics.add.group();
     this.trainGroup = this.physics.add.group();
+    this.barriereGroup.children.iterate(child => {
+        child.body.allowGravity = false;
+    });
+    this.trainGroup.children.iterate(child => {
+        child.body.allowGravity = false;
+    });
 
     this.spawnObstacle(); // Génère le premier obstacle
     this.time.addEvent({
@@ -78,10 +83,6 @@ create() {
 
     this.occupiedPositions = []; // Tableau pour suivre les positions occupées
 
-    /*
-    this.bouteille = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_bouteille");
-    this.bouteille.setCollideWorldBounds(true);
-    this.bouteille.setScale(1.5);
 
     // Création de l'animation de mouvement de la bouteille
     this.anims.create({
@@ -91,24 +92,27 @@ create() {
         repeat: -1
     });
 
-    // Lancer l'animation de la bouteille de base en boucle
-    this.bouteille.anims.play("anim_bouteille");
-
-   
-    this.piece = this.physics.add.sprite(this.positions[this.currentPositionIndex], 200, "img_piece");
-    this.piece.setCollideWorldBounds(true);
-    this.piece.setScale(1.5);
 
     // Création de l'animation de mouvement
     this.anims.create({
         key: "anim_piece",
-        frames: this.anims.generateFrameNumbers("img_piece", { start: 0, end: 35 }),
+        frames: this.anims.generateFrameNumbers("img_piece", { start: 0, end: 5 }),
         frameRate: 24,
         repeat: -1
     });
 
-    // Lancer l'animation de base en boucle
-    this.piece.anims.play("anim_piece"); */
+
+    this.pieceGroup = this.physics.add.group();
+    this.bouteilleGroup = this.physics.add.group();
+
+    this.pieceGroup.children.iterate(child => {
+        child.body.allowGravity = false;
+    });
+    this.bouteilleGroup.children.iterate(child => {
+        child.body.allowGravity = false;
+    });
+
+
 
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
@@ -137,47 +141,56 @@ create() {
     // Collision entre le perso et les barrières
     this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
     this.physics.add.overlap(this.perso, this.trainGroup, this.gameOver, null, this);
+    this.physics.add.overlap(this.perso, this.pieceGroup, this.PickUpObjects, null, this);
+    this.physics.add.overlap(this.perso, this.bottleGroup, this.PickUpObjects, null, this);
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.patterns = [
+    this.maps = [
         [
-            { position: 0, type: "barriere" },
-            { position: 1, type: "train" },
-            { position: 2, type: "barriere" },
+            [null, null, null],
+            ["piece", null, "bouteille"],
+            [null, null, null],
+            ["barriere", null, "train"],
+            [null, null, null],
+            [null, "piece", null],
+            [null, null, null],
+            ["bouteille", null, "barriere"],
+            [null, null, null],
+            [null, null, "piece"],
         ],
-        [
-            { position: 0, type: "train" },
-            null,
-            { position: 2, type: "barriere" },
-        ],
-        [
-            null,
-            { position: 1, type: "barriere" },
-            null,
-        ],
-        [
-            { position: 1, type: "barriere" },
-            null,
-            null,
-        ],
-        [
-            null,
-            null,
-            { position: 1, type: "train" },
-        ],
-        [
-            { position: 0, type: "train" },
-            { position: 2, type: "train" },
-            null,
-        ],
-        
-    ];
 
-    this.currentPattern = null;
-    this.currentPaternIndex = 0;
-    this.lastObstacleY = 0;
-    this.generatePattern();
+        [
+            [null, "piece", null],
+            [null, null, null],
+            ["barriere", null, "bouteille"],
+            [null, null, null],
+            [null, "train", null],
+            [null, null, null],
+            ["bouteille", null, "piece"],
+            [null, null, null],
+            [null, "barriere", null],
+            [null, null, null],
+
+        ],
+        [
+            ["piece", null, null],
+            [null, null, null],
+            [null, "bouteille", null],
+            [null, null, null],
+            ["train", null, "barriere"],
+            [null, null, null],
+            [null, "piece", null],
+            [null, null, null],
+            ["bouteille", null, "train"],
+            [null, null, null],
+
+        ],
+    ]
+    this.currentMap = null;
+    this.currentMapRow = 0;
+    this.lastObjY = 0;
+    this.generateMap();
 
 }
 
@@ -187,30 +200,45 @@ update(time) {
     this.background.tilePositionY -= 1;
     this.rails.forEach(rail => rail.tilePositionY -= 1.2);
 
-    if (this.currentPattern) {
-        if (this.currentPatternIndex < this.currentPattern.length) {
-            let obstacle = this.currentPattern[this.currentPatternIndex];
-            if (obstacle !== null) {
-                let xPosition = this.positions[obstacle.position];
-                if (obstacle.type === "barriere") {
+    if (this.currentMap) {
+        if (this.currentMapRow < this.currentMap.length) {
+            let row = this.currentMap[this.currentMapRow];
+            for (let i = 0; i < row.length; i++) {
+                let element = row[i];
+                let xPosition = this.positions[i];
+                if (element === "barriere") {
                     let barriere = this.physics.add.sprite(xPosition, -50, "img_barriere");
                     barriere.setScale(2.5);
                     barriere.play("anim_barriere");
                     this.barriereGroup.add(barriere);
-                    this.lastObstacleY = barriere.tilePositionY = 0;
-                } else if (obstacle.type === "train") {
+                    barriere.tilePositionY = 0;
+                } else if (element === "train") {
                     let train = this.physics.add.sprite(xPosition, -100, "img_train");
                     train.setScale(2.5);
                     this.trainGroup.add(train);
-                    this.lastObstacleY = train.tilePositionY = 0;
+                    train.tilePositionY = 0;
+                } else if (element === "piece") {
+                    let piece = this.physics.add.sprite(xPosition, -50, "img_piece");
+                    piece.setScale(1.5);
+                    piece.play("anim_piece");
+                    this.pieceGroup.add(piece);
+                    piece.tilePositionY = 0;
+                    piece.body.allowGravity = false;
+                } else if (element === "bouteille") {
+                    let bouteille = this.physics.add.sprite(xPosition, -50, "img_bouteille");
+                    bouteille.setScale(1.5);
+                    bouteille.play("anim_bouteille");
+                    this.bouteilleGroup.add(bouteille);
+                    bouteille.tilePositionY = 0;
+                    bouteille.body.allowGravity = false;
                 }
             }
-            this.currentPatternIndex++;
+            this.currentMapRow++;
         } else {
-            if(this.lastObstacleY > 800){
-            this.generatePattern();
+            if (this.lastObjY > 800) {
+                this.generateMap();
+            }
         }
-    }
     }
 
     // Défilement des barrières
@@ -230,6 +258,24 @@ update(time) {
         if (train.y > 800) {
             train.anims.stop();
             train.destroy();
+        }
+    });
+
+    //Défilement des pièces
+    this.pieceGroup.getChildren().forEach(piece => {
+        piece.tilePositionY += 1.2;
+        if (piece.tilePositionY > 800) {
+            piece.anims.stop();
+            piece.destroy();
+        }
+    });
+
+    // Défilement des bouteilles
+    this.bouteilleGroup.getChildren().forEach(bouteille => {
+        bouteille.tilePositionY += 1.2;
+        if (bouteille.tilePositionY > 800) {
+            bouteille.anims.stop();
+            bouteille.destroy();
         }
     });
 
@@ -308,14 +354,26 @@ spawnObstacle() {
     this.occupiedPositions.push(xPosition);
 }
 
-PickUpObjects(){
-    
+PickUpObjects(perso, objet) {
+    if (objet.texture.key === "img_piece") {
+        // Objet ramassé : pièce
+        this.score += 10; // Exemple : ajouter 10 points pour une pièce
+        objet.destroy();
+        console.log("Pièce ramassée. Score :", this.score);
+    } else if (objet.texture.key === "img_bouteille") {
+        // Objet ramassé : bouteille
+        this.score += 20; // Exemple : ajouter 20 points pour une bouteille
+        objet.destroy();
+        console.log("Bouteille ramassée. Score :", this.score);
+    }
+
+    // Ajouter d'autres actions si nécessaire (effets visuels, sonores, etc.)
 }
 
-generatePattern() {
-    this.currentPattern = this.patterns[Phaser.Math.Between(0, this.patterns.length - 1)];
-    this.currentPatternIndex = 0;
-    this.lastObstacleY = 0;
+generateMap() {
+    this.currentMap = this.maps[Phaser.Math.Between(0, this.maps.length - 1)];
+    this.currentMapRow = 0;
+    this.lastObjY = 0;
 }
 
 gameOver() {
