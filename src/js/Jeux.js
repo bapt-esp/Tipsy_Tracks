@@ -262,6 +262,7 @@ update(time) {
         }
     }
 
+    // Défilement des barrières
     this.barriereGroup.getChildren().forEach(barriere => {
         barriere.tilePositionY += 1.2;
         barriere.y = barriere.tilePositionY;
@@ -272,6 +273,7 @@ update(time) {
     });
 
     // Gestion des collisions avec les barrières
+    this.jumpOverBarrier();
     if (!this.isJumpingOverBarrier) {
         this.physics.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
     }
@@ -306,8 +308,7 @@ update(time) {
     }
 });
 
-    // Saut au dessus des bouteilles
-    this.jumpOverBarrier();
+
 
    
     // Gestion des déplacements gauche/droite avec cooldown
@@ -404,15 +405,19 @@ PickUpObjects(perso, objet) {
 jumpOverBarrier() {
     // Vérifie si le personnage est au sol, si la touche de saut est pressée et si le personnage est sur la même ligne que la barrière
     if (this.perso.body.bottom >= 550 && this.cursors.up.isDown && this.isCharacterOnSameLaneAsBarrier() && !this.isJumpingOverBarrier) {
-        this.isJumpingOverBarrier = true; // Définir le drapeau de saut
+        this.isJumpingOverBarrier = true; // Définir l'état de saut
 
         // Applique une impulsion verticale plus élevée pour simuler le saut au-dessus de la barrière
         this.perso.setVelocityY(-400);
 
-        // Réinitialiser le drapeau de saut après un délai (par exemple, 700 ms)
-        this.time.delayedCall(700, () => {
-            this.isJumpingOverBarrier = false;
-        });
+        // Jouer l'animation de saut
+        this.perso.anims.play("anim_jump");
+
+        // Écouter l'événement 'animationcomplete' de l'animation 'anim_jump'
+        this.perso.on('animationcomplete-anim_jump', () => {
+            this.isJumpingOverBarrier = false; // Réinitialiser l'état de saut
+            this.perso.anims.play("anim_perso"); // Rejouer l'animation de course
+        }, this);
     }
 }
 
@@ -435,6 +440,26 @@ gameOver() {
     this.physics.pause(); // Met le jeu en pause
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
+
+    // Mettre en pause les animations des barrières, trains, pièces et bouteilles
+    this.barriereGroup.getChildren().forEach(barriere => {
+        barriere.anims.pause();
+    });
+    this.trainGroup.getChildren().forEach(train => {
+        train.anims.pause();
+    });
+    this.pieceGroup.getChildren().forEach(piece => {
+        piece.anims.pause();
+    });
+    this.bouteilleGroup.getChildren().forEach(bouteille => {
+        bouteille.anims.pause();
+    });
+
+    // Arrêter le défilement du background et des rails
+    this.background.tilePositionY = this.background.tilePositionY;
+    this.rails.forEach(rail => {
+        rail.tilePositionY = rail.tilePositionY;
+    });
 
     // Afficher le texte "GAME OVER" au centre de l'écran
     let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'GAME OVER', {
