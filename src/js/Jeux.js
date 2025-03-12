@@ -31,8 +31,8 @@ pour la gestion du personnage et du gameplay.*/
     this.load.image("img_background", "src/assets/background.png");
     this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 32});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 174});
-    this.load.spritesheet("img_piece","src/assets/piece.png",{frameWidth: 34, frameHeight: 32});
-    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 18, frameHeight: 48});
+    this.load.spritesheet("img_piece","src/assets/piece_redimentionner.png",{frameWidth: 34, frameHeight: 32});
+    this.load.spritesheet("img_bouteille","src/assets/bouteillevin.png",{frameWidth: 18, frameHeight: 48});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     
 }
@@ -208,14 +208,14 @@ update(time) {
                 let xPosition = this.positions[i]; // Définition de xPosition ici
                 let obj;
                 if (element === "barriere") {
-                    let barriere = this.physics.add.sprite(xPosition, -50, "img_barriere");
+                    let barriere = this.physics.add.sprite(xPosition, -60, "img_barriere");
                     barriere.setScale(2.5);
                     barriere.play("anim_barriere");
                     this.barriereGroup.add(barriere);
                     barriere.tilePositionY = 0;
                     obj = barriere;
                 } else if (element === "train") {
-                    let train = this.physics.add.sprite(xPosition, -100, "img_train");
+                    let train = this.physics.add.sprite(xPosition, -150, "img_train");
                     train.setScale(2.5);
                     this.trainGroup.add(train);
                     train.tilePositionY = 0;
@@ -355,7 +355,7 @@ spawnObstacle() {
         this.barriereGroup.add(barriere);
         barriere.tilePositionY = 0;
     } else {
-        let train = this.physics.add.sprite(xPosition, -100, "img_train");
+        let train = this.physics.add.sprite(xPosition, -150, "img_train");
         train.setScale(2.5);
         this.trainGroup.add(train);
         train.tilePositionY = 0;
