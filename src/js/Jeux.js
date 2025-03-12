@@ -14,6 +14,8 @@ export default class jeux extends Phaser.Scene {
         this.isMoving = false;
         this.occupiedPositions = [];
         this.maps = [];
+        
+        this.zone_texte_score;
     }
 
 
@@ -192,6 +194,10 @@ create() {
     this.currentMapRow = 0;
     this.lastObjY = 0;
     this.generateMap();
+
+    this.score = 0;
+    this.zone_texte_score = this.add.text(250, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+    this.zone_texte_score.setDepth(10);
 
 }
 
@@ -388,18 +394,23 @@ spawnObstacle() {
 PickUpObjects(perso, objet) {
     if (objet.texture.key === "img_piece") {
         // Objet ramassé : pièce
-        this.score += 10; // Exemple : ajouter 10 points pour une pièce
         objet.destroy();
-        console.log("Pièce ramassée. Score :", this.score);
+        this.score += 10; // Exemple : ajouter 10 points pour une pièce
+        this.zone_texte_score.setText("Score: " + this.score); 
+        //console.log("Pièce ramassée. Score :", this.score);
     } else if (objet.texture.key === "img_bouteille") {
         // Objet ramassé : bouteille
-        this.score += 20; // Exemple : ajouter 20 points pour une bouteille
         objet.destroy();
-        console.log("Bouteille ramassée. Score :", this.score);
+        this.score += 20; // Exemple : ajouter 20 points pour une bouteille
+        this.zone_texte_score.setText("Score: " + this.score); 
+        //console.log("Bouteille ramassée. Score :", this.score);
     }
 
     // Ajouter d'autres actions si nécessaire (effets visuels, sonores, etc.)
+    /*score += 10;
+    zone_texte_score.setText("Score: " + score); */
 }
+
 
 
 jumpOverBarrier() {
