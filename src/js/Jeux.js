@@ -157,6 +157,9 @@ create() {
             ["barriere", null, "train"],
             [null, null, null],
             [null, null, null],
+            [null, null, null],
+            [null, null, null],
+            [null, null, null],
             ["piece", null, "bouteille"],
             [null, null, null],
             [null, null, null],
@@ -168,6 +171,10 @@ create() {
 
         [
             [null, "piece", null],
+            [null, null, null],
+            [null, null, null],
+            [null, null, null],
+            [null, null, null],
             [null, null, null],
             [null, null, null],
             ["barriere", null, "bouteille"],
