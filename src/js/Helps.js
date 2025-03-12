@@ -7,6 +7,7 @@ export default class help extends Phaser.Scene {
 preload(){
 this.load.image("img_regle", "src/assets/menu.png")
 this.load.image("img_quitte",'src/assets/boutton_quitter.png')
+this.load.image("img_reglejeux","src/assets/nouvreglejeux.png")
 }
 
 create(){
@@ -17,6 +18,9 @@ let playButtonhelp = this.add.image(400, 600, "img_quitte").setInteractive();
     playButtonhelp.on("pointerdown", () => {
         this.scene.start("menu");
     });
+
+this.reglejeux = this.add.image(400, 300, "img_reglejeux");
+this.reglejeux.setScale(0.85);
 }
 
 update(){
