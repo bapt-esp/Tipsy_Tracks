@@ -407,6 +407,7 @@ gameOver() {
     this.scene.pause(); 
 
     console.log("Game Over !");
+    
 }
 
 }
