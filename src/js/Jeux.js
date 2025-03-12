@@ -14,6 +14,8 @@ export default class jeux extends Phaser.Scene {
         this.isMoving = false;
         this.occupiedPositions = [];
         this.maps = [];
+        this.currentMapIndex = 0;
+        this.scrollSpeed = 1.2; // Vitesse de défilement uniforme
     }
 
 
@@ -47,12 +49,18 @@ create() {
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
     this.background = this.add.tileSprite(400, 400, 400, 400, "img_background");
     this.background.setScale(3);
+    this.physics.add.existing(this.background); // Ajout d'un corps physique
+    this.background.body.setVelocityY(this.scrollSpeedValue); // Définir la vitesse
+    this.background.body.allowGravity = false; // Désactiver la gravité
 
      // Création des trois rails indépendants aux positions 200, 400 et 600
      for (let i = 0; i < 3; i++) {
         let rail = this.add.tileSprite(this.positions[i], 580, 128, 500, "img_rails");
-        rail.setScale(2.5); // Ajustement de la hauteur
-        this.rails.push(rail); // Ajout dans le tableau pour mise à jour
+        rail.setScale(2.5);
+        this.rails.push(rail);
+        this.physics.add.existing(rail); // Ajout d'un corps physique
+        rail.body.setVelocityY(this.scrollSpeedValue); // Définir la vitesse
+        rail.body.allowGravity = false; // Désactiver la gravité
     }
     
 
@@ -67,22 +75,16 @@ create() {
     //On crée un grp de barrières et de train pour qu'il puisse y en avoir plusieurs qui apparaîssent.
     this.barriereGroup = this.physics.add.group();
     this.trainGroup = this.physics.add.group();
+
     this.barriereGroup.children.iterate(child => {
         child.body.allowGravity = false;
+        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
     });
     this.trainGroup.children.iterate(child => {
         child.body.allowGravity = false;
+        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
     });
 
-    this.spawnObstacle(); // Génère le premier obstacle
-    this.time.addEvent({
-        delay: 2000, // Génère un obstacle toutes les 2 secondes
-        callback: this.spawnObstacle,
-        callbackScope: this,
-        loop: true
-    });
-
-    this.occupiedPositions = []; // Tableau pour suivre les positions occupées
 
 
     // Création de l'animation de mouvement de la bouteille
@@ -108,9 +110,11 @@ create() {
 
     this.pieceGroup.children.iterate(child => {
         child.body.allowGravity = false;
+        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
     });
     this.bouteilleGroup.children.iterate(child => {
         child.body.allowGravity = false;
+        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
     });
 
 
@@ -156,37 +160,16 @@ create() {
             [null, null, null],
             ["barriere", null, "train"],
             [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            ["piece", null, "bouteille"],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-
-        ],
-
-        [
             [null, "piece", null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            ["barriere", null, "bouteille"],
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
-            [null, "train", null],
-            [null, null, null],
-            [null, null, null],
+            [null, "piece", null],
+            [null, "piece", null],
+            [null, "piece", null],
+            [null, "piece", null],
+            [null, "barrière", null],
 
 
         ],
+
     ]
     this.currentMap = null;
     this.currentMapRow = 0;
@@ -198,9 +181,21 @@ create() {
 
 update(time) {
     
-    this.background.tilePositionY -= 1;
-    
-    this.rails.forEach(rail => rail.tilePositionY -= 1.2);
+    // Défilement du background
+    if (this.background.y > 1200) {
+        this.background.y = 400; // Remettre le fond en place
+        this.background.tilePositionY = 0; // Réinitialiser la position de la texture
+    }
+    this.background.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
+
+    // Défilement des rails
+    this.rails.forEach(rail => {
+        if (rail.y > 1200) {
+            rail.y = 580; // Remettre les rails en place
+            rail.tilePositionY = 0; // Réinitialiser la position de la texture
+        }
+        rail.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
+    });
     
 
     if (this.currentMap) {
@@ -208,25 +203,21 @@ update(time) {
             let row = this.currentMap[this.currentMapRow];
             for (let i = 0; i < row.length; i++) {
                 let element = row[i];
-                let xPosition = this.positions[i]; // Définition de xPosition ici
-                let obj;
+                let xPosition = this.positions[i];
                 if (element === "barriere") {
                     let barriere = this.physics.add.sprite(xPosition, -60, "img_barriere");
                     barriere.setScale(2.5);
                     barriere.play("anim_barriere");
                     this.barriereGroup.add(barriere);
                     barriere.tilePositionY = 0;
-                    obj = barriere;
-                    // Ajuster la hitbox de la barrière
-                    barriere.body.setOffset(12, 12); // Ajustez ces valeurs pour centrer la hitbox sur votre barrière
+                    barriere.body.setOffset(12, 12);
                     barriere.setDepth(3);
                 } else if (element === "train") {
                     let train = this.physics.add.sprite(xPosition, -150, "img_train");
                     train.setScale(2.5);
                     this.trainGroup.add(train);
                     train.tilePositionY = 0;
-                    obj = train;
-                    train.body.setOffset(12, 6); // Ajustez ces valeurs pour centrer la hitbox du train
+                    train.body.setOffset(12, 6);
                     train.setDepth(3);
                 } else if (element === "piece") {
                     let piece = this.physics.add.sprite(xPosition, -50, "img_piece");
@@ -235,9 +226,8 @@ update(time) {
                     this.pieceGroup.add(piece);
                     piece.tilePositionY = 0;
                     piece.body.allowGravity = false;
-                    obj = piece;
                     piece.setDepth(6);
-                    piece.body.setOffset(18,28);
+                    piece.body.setOffset(18, 28);
                 } else if (element === "bouteille") {
                     let bouteille = this.physics.add.sprite(xPosition, -50, "img_bouteille");
                     bouteille.setScale(1.5);
@@ -245,68 +235,54 @@ update(time) {
                     this.bouteilleGroup.add(bouteille);
                     bouteille.tilePositionY = 0;
                     bouteille.body.allowGravity = false;
-                    obj = bouteille;
                     bouteille.setDepth(6);
-                    bouteille.body.setOffset(18, 28); // Ajustez ces valeurs pour centrer la hitbox du train
-                }
-    
-                if (obj) {
-                    this.lastObjY = obj.y;
+                    bouteille.body.setOffset(18, 28);
                 }
             }
-            this.currentMapRow++;
+            this.time.delayedCall(2000, () => {
+                this.currentMapRow++;
+            }, this);
         } else {
-            if (this.lastObjY > 800) {
+            if (this.barriereGroup.getLength() === 0 && this.trainGroup.getLength() === 0 && this.pieceGroup.getLength() === 0 && this.bouteilleGroup.getLength() === 0) {
                 this.generateMap();
             }
         }
     }
 
-    // Défilement des barrières
+    // Défilement et destruction des obstacles
     this.barriereGroup.getChildren().forEach(barriere => {
-        barriere.tilePositionY += 1.2;
-        barriere.y = barriere.tilePositionY;
+        barriere.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
         if (barriere.y > 800) {
-            barriere.anims.stop();
             barriere.destroy();
         }
-    });
+    });;
 
     // Gestion des collisions avec les barrières
     this.jumpOverBarrier();
     if (!this.isJumpingOverBarrier) {
         this.physics.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
     }
-
-    // Défilement des trains
+    
     this.trainGroup.getChildren().forEach(train => {
-    train.tilePositionY += 1.2;
-    train.y = train.tilePositionY; 
-    if (train.y > 800) {
-        train.anims.stop();
-        train.destroy();
-    }
-});
+        train.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
+        if (train.y > 800) {
+            train.destroy();
+        }
+    });
 
-    // Défilement des pièces
     this.pieceGroup.getChildren().forEach(piece => {
-    piece.tilePositionY += 1.2;
-    piece.y = piece.tilePositionY; 
-    if (piece.y > 800) {
-        piece.anims.stop();
-        piece.destroy();
-    }
-});
+        piece.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
+        if (piece.y > 800) {
+            piece.destroy();
+        }
+    });
 
-    // Défilement des bouteilles
     this.bouteilleGroup.getChildren().forEach(bouteille => {
-    bouteille.tilePositionY += 1.2;
-    bouteille.y = bouteille.tilePositionY; 
-    if (bouteille.y > 800) {
-        bouteille.anims.stop();
-        bouteille.destroy();
-    }
-});
+        bouteille.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
+        if (bouteille.y > 800) {
+            bouteille.destroy();
+        }
+    });
 
 
 
@@ -363,28 +339,6 @@ moveCharacter() {
     });
 }
 
-spawnObstacle() {
-    let randomLane = Phaser.Math.Between(0, 2);
-    let xPosition = this.positions[randomLane];
-
-    // Probabilité de 70% pour une barrière, 30% pour un train
-    if (Phaser.Math.Between(0, 9) < 7) {
-        let barriere = this.physics.add.sprite(xPosition, -50, "img_barriere");
-        barriere.setScale(2.5);
-        barriere.play("anim_barriere");
-        this.barriereGroup.add(barriere);
-        barriere.tilePositionY = 0;
-    } else {
-        let train = this.physics.add.sprite(xPosition, -150, "img_train");
-        train.setScale(2.5);
-        this.trainGroup.add(train);
-        train.tilePositionY = 0;
-    }
-
-    // Ajouter la position à la liste des positions occupées
-    this.occupiedPositions.push(xPosition);
-}
-
 PickUpObjects(perso, objet) {
     if (objet.texture.key === "img_piece") {
         // Objet ramassé : pièce
@@ -431,9 +385,12 @@ isCharacterOnSameLaneAsBarrier() {
 }
 
 generateMap() {
-    this.currentMap = this.maps[Phaser.Math.Between(0, this.maps.length - 1)];
+    this.currentMap = this.maps[this.currentMapIndex];
     this.currentMapRow = 0;
     this.lastObjY = 0;
+
+    // Passer à la carte suivante ou revenir à la première carte si toutes les cartes ont été jouées
+    this.currentMapIndex = (this.currentMapIndex + 1) % this.maps.length;
 }
 
 gameOver() {
