@@ -394,26 +394,22 @@ gameOver() {
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
 
-    // Mettre en pause les animations des barrières, trains, pièces et bouteilles
-    this.barriereGroup.getChildren().forEach(barriere => {
-        barriere.anims.pause();
-    });
-    this.trainGroup.getChildren().forEach(train => {
-        train.anims.pause();
-    });
-    this.pieceGroup.getChildren().forEach(piece => {
-        piece.anims.pause();
-    });
-    this.bouteilleGroup.getChildren().forEach(bouteille => {
-        bouteille.anims.pause();
-    });
+    // Arrêter les animations des groupes d'objets
+    this.barriereGroup.getChildren().forEach(barriere => barriere.anims.pause());
+    this.trainGroup.getChildren().forEach(train => train.anims.pause());
+    this.pieceGroup.getChildren().forEach(piece => piece.anims.pause());
+    this.bouteilleGroup.getChildren().forEach(bouteille => bouteille.anims.pause());
 
-    // Arrêter le défilement du background et des rails
-    this.background.tilePositionY = this.background.tilePositionY;
+    // Arrêter le défilement du background
+    this.background.body.setVelocityY(0); // Arrête le mouvement du background
+    this.background.body.allowGravity = false; // Désactive la gravité
+
+    // Arrêter le défilement des rails
     this.rails.forEach(rail => {
-        rail.tilePositionY = rail.tilePositionY;
+        rail.body.setVelocityY(0); // Arrête le mouvement des rails
+        rail.body.allowGravity = false; // Désactive la gravité
     });
-
+    
     // Afficher le texte "GAME OVER" au centre de l'écran
     let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'GAME OVER', {
         fontSize: '64px',
