@@ -34,7 +34,8 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_piece","src/assets/piece_redimentionner.png",{frameWidth: 34, frameHeight: 32});
     this.load.spritesheet("img_bouteille","src/assets/bouteillevin.png",{frameWidth: 18, frameHeight: 48});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
-    
+    this.load.image("img_boutton_rejouer", "src/assets/boutton_rejouer.png")
+    this.load.image("img_boutton_quitter", "src/assets/boutton_quitter.png")
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -393,21 +394,44 @@ gameOver() {
     this.perso.anims.stop();
 
     // Afficher le texte "GAME OVER" au centre de l'écran
-    let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'GAME OVER', {
+    let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'GAME OVER', {
         fontSize: '64px',
         fill: '#ff0000',
         fontStyle: 'bold',
         align: 'center'
     }).setOrigin(0.5);
 
-    // Désactive toutes les entrées pour empêcher les actions après la fin du jeu
-    this.input.enabled = false; 
+    // Créer le bouton "Rejouer"
+    let replayButton = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 100, "img_boutton_rejouer");
+    replayButton.setScale(2); // Ajuste l'échelle du bouton
+    replayButton.setInteractive(); // Rendre le bouton interactif
+
+    // Ajouter l'événement pour le bouton "Rejouer"
+    replayButton.on('pointerdown', () => {
+        this.restartGame(); // Appeler la fonction pour redémarrer le jeu
+    });
+
+    // Créer le bouton "Quitter"
+    let quitButton = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 200, "img_boutton_quitter");
+    quitButton.setScale(2); // Ajuste l'échelle du bouton
+    quitButton.setInteractive(); // Rendre le bouton interactif
+
+    // Ajouter l'événement pour le bouton "Quitter"
+    quitButton.on('pointerdown', () => {
+        this.quitGame(); // Appeler la fonction pour quitter le jeu
+    });
+
+    // Désactiver toutes les entrées pour empêcher toute action après la fin du jeu
+    this.input.enabled = false;
 
     // Arrêter la scène pour bloquer toute mise à jour
     this.scene.pause(); 
 
     console.log("Game Over !");
-    
 }
+
+
+
+
 
 }
