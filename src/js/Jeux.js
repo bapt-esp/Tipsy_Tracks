@@ -29,10 +29,10 @@ pour la gestion du personnage et du gameplay.*/
  preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 30, frameHeight: 55 });
     this.load.image("img_background", "src/assets/background.png");
-    this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 64});
+    this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 32});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 174});
-    this.load.spritesheet("img_piece","src/assets/piece.png",{frameWidth: 64, frameHeight: 64});
-    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 64, frameHeight: 64});
+    this.load.spritesheet("img_piece","src/assets/piece.png",{frameWidth: 34, frameHeight: 32});
+    this.load.spritesheet("img_bouteille","src/assets/bouteille.png",{frameWidth: 18, frameHeight: 48});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     
 }

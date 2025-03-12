@@ -24,6 +24,7 @@ export default class selection extends Phaser.Scene {
     this.load.image("img_menu", "src/assets/menu.png")
     this.load.image("img_bouton", "src/assets/Boutton.png")
     this.load.image("img_bouttonhelp", "src/assets/bouttonhelp.png")
+    this.load.image("img_title","src/assets/title.png")
   }
 
   /***********************************************************************/
@@ -49,6 +50,8 @@ export default class selection extends Phaser.Scene {
     playButton.on("pointerdown", () => {
         this.scene.start("bouttonhelp");
     });
+
+    this.title= this.add.image(400,100, "img_title");
     
 }
   
