@@ -391,6 +391,21 @@ gameOver() {
     this.physics.pause(); // Met le jeu en pause
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
+
+    // Afficher le texte "GAME OVER" au centre de l'écran
+    let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'GAME OVER', {
+        fontSize: '64px',
+        fill: '#ff0000',
+        fontStyle: 'bold',
+        align: 'center'
+    }).setOrigin(0.5);
+
+    // Désactive toutes les entrées pour empêcher les actions après la fin du jeu
+    this.input.enabled = false; 
+
+    // Arrêter la scène pour bloquer toute mise à jour
+    this.scene.pause(); 
+
     console.log("Game Over !");
 }
 
