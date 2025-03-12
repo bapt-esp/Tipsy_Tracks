@@ -308,6 +308,10 @@ spawnObstacle() {
     this.occupiedPositions.push(xPosition);
 }
 
+PickUpObjects(){
+    
+}
+
 generatePattern() {
     this.currentPattern = this.patterns[Phaser.Math.Between(0, this.patterns.length - 1)];
     this.currentPatternIndex = 0;
