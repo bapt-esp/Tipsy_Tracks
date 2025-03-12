@@ -32,7 +32,7 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 32});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 174});
     this.load.spritesheet("img_piece","src/assets/piece_redimentionner.png",{frameWidth: 34, frameHeight: 32});
-    this.load.spritesheet("img_bouteille","src/assets/bouteille(3).png",{frameWidth: 18, frameHeight: 48});
+    this.load.spritesheet("img_bouteille","src/assets/bouteillevin.png",{frameWidth: 18, frameHeight: 48});
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     
 }
@@ -117,6 +117,10 @@ create() {
     this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
     this.perso.setCollideWorldBounds(true);
     this.perso.setScale(2.5);
+    // Ajuster la hitbox du personnage
+    this.perso.body.setSize(30, 55); // Ajustez ces valeurs selon la taille réelle de votre personnage
+    this.perso.body.setOffset(20, 45); // Ajustez ces valeurs pour centrer la hitbox sur votre personnage
+    this.perso.setDepth(10);
 
     // Création de l'animation de mouvement
     this.anims.create({
@@ -149,41 +153,30 @@ create() {
     this.maps = [
         [
             [null, null, null],
-            ["piece", null, "bouteille"],
-            [null, null, null],
             ["barriere", null, "train"],
             [null, null, null],
-            [null, "piece", null],
             [null, null, null],
-            ["bouteille", null, "barriere"],
+            ["piece", null, "bouteille"],
             [null, null, null],
-            [null, null, "piece"],
+            [null, null, null],
+            [null, null, null],
+            [null, null, null],
+            [null, null, null],
+
         ],
 
         [
             [null, "piece", null],
+            [null, null, null],
             [null, null, null],
             ["barriere", null, "bouteille"],
             [null, null, null],
+            [null, null, null],
+            [null, null, null],
             [null, "train", null],
             [null, null, null],
-            ["bouteille", null, "piece"],
-            [null, null, null],
-            [null, "barriere", null],
             [null, null, null],
 
-        ],
-        [
-            ["piece", null, null],
-            [null, null, null],
-            [null, "bouteille", null],
-            [null, null, null],
-            ["train", null, "barriere"],
-            [null, null, null],
-            [null, "piece", null],
-            [null, null, null],
-            ["bouteille", null, "train"],
-            [null, null, null],
 
         ],
     ]
@@ -198,7 +191,9 @@ create() {
 update(time) {
     
     this.background.tilePositionY -= 1;
+    
     this.rails.forEach(rail => rail.tilePositionY -= 1.2);
+    
 
     if (this.currentMap) {
         if (this.currentMapRow < this.currentMap.length) {
@@ -214,12 +209,19 @@ update(time) {
                     this.barriereGroup.add(barriere);
                     barriere.tilePositionY = 0;
                     obj = barriere;
+                    // Ajuster la hitbox de la barrière
+                    barriere.body.setSize(64, 32); // Ajustez ces valeurs selon la taille réelle de votre barrière
+                    barriere.body.setOffset(24, 12); // Ajustez ces valeurs pour centrer la hitbox sur votre barrière
+                    barriere.setDepth(3);
                 } else if (element === "train") {
                     let train = this.physics.add.sprite(xPosition, -150, "img_train");
                     train.setScale(2.5);
                     this.trainGroup.add(train);
                     train.tilePositionY = 0;
                     obj = train;
+                    train.body.setSize(64, 174); // Ajustez ces valeurs selon la taille réelle du train
+                    train.body.setOffset(24, 6); // Ajustez ces valeurs pour centrer la hitbox du train
+                    train.setDepth(3);
                 } else if (element === "piece") {
                     let piece = this.physics.add.sprite(xPosition, -50, "img_piece");
                     piece.setScale(1.5);
@@ -228,6 +230,7 @@ update(time) {
                     piece.tilePositionY = 0;
                     piece.body.allowGravity = false;
                     obj = piece;
+                    piece.setDepth(6);
                 } else if (element === "bouteille") {
                     let bouteille = this.physics.add.sprite(xPosition, -50, "img_bouteille");
                     bouteille.setScale(1.5);
@@ -236,6 +239,7 @@ update(time) {
                     bouteille.tilePositionY = 0;
                     bouteille.body.allowGravity = false;
                     obj = bouteille;
+                    bouteille.setDepth(6);
                 }
     
                 if (obj) {
@@ -289,6 +293,9 @@ update(time) {
         bouteille.destroy();
     }
 });
+
+    // Saut au dessus des bouteilles
+    this.jumpOverBarrier();
 
    
     // Gestion des déplacements gauche/droite avec cooldown
@@ -379,6 +386,22 @@ PickUpObjects(perso, objet) {
     }
 
     // Ajouter d'autres actions si nécessaire (effets visuels, sonores, etc.)
+}
+
+jumpOverBarrier() {
+    // Vérifie si le personnage est au sol et si la touche de saut est pressée
+    if (this.perso.body.bottom >= 550 && this.cursors.up.isDown) { // Ajustez 550 en fonction de la position y de votre sol
+        // Désactive la collision avec les barrières
+        this.physics.world.removeCollider(this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this));
+
+        // Applique une impulsion verticale pour simuler le saut
+        this.perso.setVelocityY(-300);
+
+        // Réactive la collision après un délai (par exemple, 500 ms)
+        this.time.delayedCall(500, () => {
+            this.physics.add.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
+        });
+    }
 }
 
 generateMap() {
