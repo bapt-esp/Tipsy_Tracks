@@ -8,9 +8,10 @@ export default class jeux extends Phaser.Scene {
         this.cursors = null;
         this.isJumping = false;
         this.moveCooldown = 0;
+        this.jumpCooldown = 0;
         this.positions = [200, 400, 600];
         this.currentPositionIndex = 1;
-        this.background = null;
+        this.background2 = null;
         this.isMoving = false;
         this.occupiedPositions = [];
         this.maps = [];
@@ -18,6 +19,10 @@ export default class jeux extends Phaser.Scene {
         this.scrollSpeed = 1.2; // Vitesse de défilement uniforme
         this.zone_texte_score;
         this.zone_texte_score2;
+        this.isJumpingOverBarrier = false;
+        this.persoInitialized = false;
+        this.persoCollidersEnabled = true; // Ajout de cette variable
+    
     
     }
 
@@ -33,7 +38,7 @@ pour la gestion du personnage et du gameplay.*/
 
  preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 30, frameHeight: 55 });
-    this.load.image("img_background", "src/assets/background.png");
+    this.load.image("img_background2", "src/assets/background2.png");
     this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 32});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 174});
     this.load.spritesheet("img_piece","src/assets/piece_redimentionner.png",{frameWidth: 34, frameHeight: 32});
@@ -50,11 +55,11 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 create() {
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
-    this.background = this.add.tileSprite(400, 400, 400, 400, "img_background");
-    this.background.setScale(3);
-    this.physics.add.existing(this.background); // Ajout d'un corps physique
-    this.background.body.setVelocityY(this.scrollSpeedValue); // Définir la vitesse
-    this.background.body.allowGravity = false; // Désactiver la gravité
+    this.background2 = this.add.tileSprite(400, 300, 832, 832, "img_background2");
+    this.background2.setScale(2);
+    this.physics.add.existing(this.background2); // Ajout d'un corps physique
+    this.background2.body.setVelocityY(this.scrollSpeedValue); // Définir la vitesse
+    this.background2.body.allowGravity = false; // Désactiver la gravité
 
      // Création des trois rails indépendants aux positions 200, 400 et 600
      for (let i = 0; i < 3; i++) {
@@ -103,7 +108,7 @@ create() {
     this.anims.create({
         key: "anim_piece",
         frames: this.anims.generateFrameNumbers("img_piece", { start: 0, end: 5 }),
-        frameRate: 24,
+        frameRate: 20,
         repeat: -1
     });
 
@@ -122,13 +127,14 @@ create() {
 
 
 
-    this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 500, "img_perso");
+    this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 400, "img_perso");
     this.perso.setCollideWorldBounds(true);
     this.perso.setScale(2.5);
     // Ajuster la hitbox du personnage
-    this.perso.body.setSize(30, 55); // Ajustez ces valeurs selon la taille réelle de votre personnage
-    this.perso.body.setOffset(20, 45); // Ajustez ces valeurs pour centrer la hitbox sur votre personnage
+    this.perso.body.setSize(18, 34); // Ajustez ces valeurs selon la taille réelle de votre personnage
+    this.perso.body.setOffset(6.5, 19); // Ajustez ces valeurs pour centrer la hitbox sur votre personnage
     this.perso.setDepth(8);
+    this.persoInitialized = true;
 
     // Création de l'animation de mouvement
     this.anims.create({
@@ -142,7 +148,7 @@ create() {
     this.anims.create({
         key: "anim_jump",
         frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
-        frameRate: 7,
+        frameRate: 5,
         repeat: 0
     });
 
@@ -183,18 +189,21 @@ create() {
     this.zone_texte_score2 = this.add.text(500, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
     this.zone_texte_score2.setDepth(10);
 
-
 }
 
 
 update(time) {
     
-    // Défilement du background
-    if (this.background.y > 1200) {
-        this.background.y = 400; // Remettre le fond en place
-        this.background.tilePositionY = 0; // Réinitialiser la position de la texture
+    if (!this.persoInitialized) {
+        return; // Sort de la fonction si perso n'est pas initialisé
     }
-    this.background.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
+    
+    // Défilement du background
+    if (this.background2.y > 1200) {
+        this.background2.y = 400; // Remettre le fond en place
+        this.background2.tilePositionY = 0; // Réinitialiser la position de la texture
+    }
+    this.background2.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
 
     // Défilement des rails
     this.rails.forEach(rail => {
@@ -202,7 +211,7 @@ update(time) {
             rail.y = 580; // Remettre les rails en place
             rail.tilePositionY = 0; // Réinitialiser la position de la texture
         }
-        rail.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
+        rail.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
     });
     
 
@@ -218,14 +227,16 @@ update(time) {
                     barriere.play("anim_barriere");
                     this.barriereGroup.add(barriere);
                     barriere.tilePositionY = 0;
-                    barriere.body.setOffset(12, 12);
+                    barriere.body.setSize(64,15);
+                    barriere.body.setOffset(2, 7);
                     barriere.setDepth(3);
                 } else if (element === "train") {
                     let train = this.physics.add.sprite(xPosition, -150, "img_train");
                     train.setScale(2.5);
                     this.trainGroup.add(train);
                     train.tilePositionY = 0;
-                    train.body.setOffset(12, 6);
+                    train.body.setSize(64,144);
+                    train.body.setOffset(1.5, 6);
                     train.setDepth(3);
                 } else if (element === "piece") {
                     let piece = this.physics.add.sprite(xPosition, -50, "img_piece");
@@ -235,7 +246,6 @@ update(time) {
                     piece.tilePositionY = 0;
                     piece.body.allowGravity = false;
                     piece.setDepth(6);
-                    piece.body.setOffset(18, 28);
                 } else if (element === "bouteille") {
                     let bouteille = this.physics.add.sprite(xPosition, -50, "img_bouteille");
                     bouteille.setScale(1.5);
@@ -244,7 +254,7 @@ update(time) {
                     bouteille.tilePositionY = 0;
                     bouteille.body.allowGravity = false;
                     bouteille.setDepth(6);
-                    bouteille.body.setOffset(18, 28);
+
                 }
             }
             this.time.delayedCall(2000, () => {
@@ -265,12 +275,14 @@ update(time) {
         }
     });;
 
+
     // Gestion des collisions avec les barrières
-    this.jumpOverBarrier();
-    if (!this.isJumpingOverBarrier) {
-        this.physics.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
-    }
-    
+    this.jumpOverBarrier(time);
+    this.handleCollisions(); // Gestion des collisions
+
+    // Gestion du saut normal
+    this.handleJump(time);
+
     this.trainGroup.getChildren().forEach(train => {
         train.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
         if (train.y > 800) {
@@ -309,7 +321,7 @@ update(time) {
     }
     
     // Gestion du saut
-    if (this.cursors.up.isDown && !this.isJumping && this.perso.body.blocked.down) { // Ajout de la vérification du sol
+    if (this.cursors.up.isDown && !this.isJumping && this.perso.body.onFloor()) { // Ajout de la vérification du sol
         this.isJumping = true;
         this.perso.setVelocityY(-300);
         this.perso.anims.play("anim_jump");
@@ -369,31 +381,70 @@ PickUpObjects(perso, objet) {
 
 
 
-jumpOverBarrier() {
-    // Vérifie si le personnage est au sol, si la touche de saut est pressée et si le personnage est sur la même ligne que la barrière
-    if (this.perso.body.bottom >= 550 && this.cursors.up.isDown && this.isCharacterOnSameLaneAsBarrier() && !this.isJumpingOverBarrier) {
-        this.isJumpingOverBarrier = true; // Définir l'état de saut
-
-        // Applique une impulsion verticale plus élevée pour simuler le saut au-dessus de la barrière
+jumpOverBarrier(time) {
+    if (this.cursors.up.isDown && this.isCharacterOnFloor() && this.isCharacterOnSameLaneAsBarrier() && !this.isJumpingOverBarrier && time > this.jumpCooldown) {
+        this.isJumpingOverBarrier = true;
         this.perso.setVelocityY(-400);
-
-        // Jouer l'animation de saut
         this.perso.anims.play("anim_jump");
 
-        // Écouter l'événement 'animationcomplete' de l'animation 'anim_jump'
-        this.perso.on('animationcomplete-anim_jump', () => {
-            this.isJumpingOverBarrier = false; // Réinitialiser l'état de saut
-            this.perso.anims.play("anim_perso"); // Rejouer l'animation de course
+        this.perso.body.checkCollision.none = true; // Désactiver les collisions
+
+        this.time.delayedCall(500, () => {
+            this.isJumpingOverBarrier = false;
+            this.perso.anims.play("anim_perso");
+            this.perso.body.checkCollision.none = false; // Réactiver les collisions
         }, this);
+
+        this.jumpCooldown = time + 1000;
+    }
+}
+
+disableColliders() {
+    if (this.persoCollidersEnabled) {
+        this.physics.world.removeCollider(this.perso.body.collider); // Désactiver le collider
+        this.persoCollidersEnabled = false;
+    }
+}
+
+enableColliders() {
+    if (!this.persoCollidersEnabled) {
+        this.physics.world.addCollider(this.perso, this.barriereGroup, this.gameOver, null, this); // Réactiver le collider
+        this.physics.world.addCollider(this.perso, this.trainGroup, this.gameOver, null, this); // Réactiver le collider
+        this.persoCollidersEnabled = true;
+    }
+}
+
+handleCollisions() {
+    if (this.persoCollidersEnabled) {
+        this.physics.overlap(this.perso, this.barriereGroup, this.gameOver, null, this);
+        this.physics.overlap(this.perso, this.trainGroup, this.gameOver, null, this);
+    }
+}
+
+isCharacterOnFloor() {
+    return this.perso.body.blocked.down || this.perso.body.onFloor();
+}
+
+handleJump(time) {
+    if (this.cursors.up.isDown && !this.isJumping && this.isCharacterOnFloor() && time > this.jumpCooldown) {
+        this.isJumping = true;
+        this.perso.setVelocityY(-300);
+        this.perso.anims.play("anim_jump");
+
+        this.time.delayedCall(500, () => {
+            this.isJumping = false;
+            this.perso.anims.play("anim_perso");
+        }, this);
+
+        this.jumpCooldown = time + 500; // Ajoute un cooldown de 500ms
     }
 }
 
 isCharacterOnSameLaneAsBarrier() {
     let characterLane = this.currentPositionIndex;
     let closestBarrier = this.barriereGroup.getChildren().find(barrier => {
-        return Math.abs(barrier.x - this.positions[characterLane]) < 100; // Ajustez la tolérance si nécessaire
+        return Math.abs(barrier.x - this.positions[characterLane]) < 50 && barrier.y > this.perso.y - 200; // Augmente la portée de la détection
     });
-
     return !!closestBarrier;
 }
 
@@ -418,15 +469,17 @@ gameOver() {
     this.bouteilleGroup.getChildren().forEach(bouteille => bouteille.anims.pause());
 
     // Arrêter le défilement du background
-    this.background.body.setVelocityY(0); // Arrête le mouvement du background
-    this.background.body.allowGravity = false; // Désactive la gravité
+    this.background2.body.setVelocityY(0); // Arrête le mouvement du background
+    this.background2.body.allowGravity = false; // Désactive la gravité
 
     // Arrêter le défilement des rails
     this.rails.forEach(rail => {
-        rail.body.setVelocityY(0); // Arrête le mouvement des rails
-        rail.body.allowGravity = false; // Désactive la gravité
+        if (rail.body) { // Vérification de l'existence de rail.body
+            rail.body.setVelocityY(0);
+            rail.body.allowGravity = false;
+        }
     });
-    
+
     // Afficher le texte "GAME OVER" au centre de l'écran
     let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'GAME OVER', {
         fontSize: '64px',
@@ -444,7 +497,7 @@ gameOver() {
 
     // Ajouter l'événement pour le bouton "Rejouer"
     replayButton.on('pointerdown', () => {
-        this.scene.start("jeux"); // Relance la scène du jeu
+        this.scene.restart("jeux"); // Relance la scène du jeu
     });
 
     // Créer le bouton "Quitter"
