@@ -309,7 +309,7 @@ update(time) {
         this.background2.y = 400; // Remettre le fond en place
         this.background2.tilePositionY = 0; // Réinitialiser la position de la texture
     }
-    this.background2.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
+    this.background2.tilePositionY -= 2.5; // Ajustement mineur pour éviter un blanc
 
     // Défilement des rails
     this.rails.forEach(rail => {
@@ -317,7 +317,7 @@ update(time) {
             rail.y = 580; // Remettre les rails en place
             rail.tilePositionY = 0; // Réinitialiser la position de la texture
         }
-        rail.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
+        rail.tilePositionY -= 2.5; // Ajustement mineur pour éviter un blanc
     });
     
 
@@ -363,7 +363,7 @@ update(time) {
 
                 }
             }
-            this.time.delayedCall(2000, () => {
+            this.time.delayedCall(25, () => {
                 this.currentMapRow++;
             }, this);
         } else {
