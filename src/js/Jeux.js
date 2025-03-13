@@ -88,11 +88,11 @@ create() {
 
     this.barriereGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
     this.trainGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
 
 
@@ -120,11 +120,11 @@ create() {
 
     this.pieceGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
     this.bouteilleGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
 
 
@@ -170,12 +170,116 @@ create() {
         [
             [null, null, null],
             ["barriere", null, "train"],
-            [null, null, null],
-            [null, "bouteille", null],
-            [null, "barrière", null],
-
-
         ],
+
+        [
+            [null, null, null],
+            [null, "train", null],
+        ],
+
+        [
+            [null, null, null],
+            ["bouteille", "piece", null],
+        ],
+
+        [
+            [null, null, null],
+            ["barriere", "barriere", "piece"],
+        ],
+
+        [
+            [null, null, null],
+            ["train", "piece", "bouteille"],
+        ],
+        [
+            [null, null, null],
+            ["bouteille", "bouteille", "piece"],
+        ],
+        [
+            [null, null, null],
+            ["bouteille", "bouteille", "train"],
+        ],
+        [
+            [null, null, null],
+            ["barriere", "train", "train"],
+        ],
+        [
+            [null, null, null],
+            [null, "train", null],
+        ],
+        [
+            [null, null, null],
+            ["barriere", "train", null],
+        ],
+        [
+            [null, null, null],
+            ["train", "bouteille", "piece"],
+        ],
+        [
+            [null, null, null],
+            ["train", null, "barriere"],
+        ],
+        [
+            [null, null, null],
+            [null, "train", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["bouteille", "bouteille", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["piece", "train", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["train", "train", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["piece", "bouteille", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["bouteille", "train", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["train", "train", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["barriere", "train", "barriere"],
+        ],
+        [
+            [null, null, null],
+            ["piece", "train", "train"],
+        ],
+        [
+            [null, null, null],
+            [null, "barriere", "piece"],
+        ],
+        [
+            [null, null, null],
+            [null, "barriere", "piece"],
+        ],
+        [
+            [null, null, null],
+            ["piece", "barriere", "piece"],
+        ],
+        [
+            [null, null, null],
+            ["barriere", "barriere", "piece"],
+        ],
+        [
+            [null, null, null],
+            ["piece", "barriere",  null],
+        ],
+        [
+            [null, null, null],
+            ["piece", "barriere",  "bouteille"],
+        ],
+        
 
     ]
     this.currentMap = null;
@@ -271,7 +375,7 @@ update(time) {
 
     // Défilement et destruction des obstacles
     this.barriereGroup.getChildren().forEach(barriere => {
-        barriere.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
+        barriere.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
         if (barriere.y > 800) {
             barriere.destroy();
         }
@@ -286,21 +390,21 @@ update(time) {
     this.handleJump(time);
 
     this.trainGroup.getChildren().forEach(train => {
-        train.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
+        train.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
         if (train.y > 800) {
             train.destroy();
         }
     });
 
     this.pieceGroup.getChildren().forEach(piece => {
-        piece.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
+        piece.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
         if (piece.y > 800) {
             piece.destroy();
         }
     });
 
     this.bouteilleGroup.getChildren().forEach(bouteille => {
-        bouteille.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
+        bouteille.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
         if (bouteille.y > 800) {
             bouteille.destroy();
         }
