@@ -19,7 +19,7 @@ var config = {
     default: "arcade", // mode arcade : le plus simple : des rectangles pour gérer les collisions. Pas de pentes
     arcade: {
       gravity: { y: 500 },
-      debug: true
+      debug: false
   }
     
   },

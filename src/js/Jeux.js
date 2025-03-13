@@ -135,7 +135,7 @@ create() {
 
 
 
-    this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 400, "img_perso");
+    this.perso = this.physics.add.sprite(this.positions[this.currentPositionIndex], 700, "img_perso");
     this.perso.setCollideWorldBounds(true);
     this.perso.setScale(2.5);
     // Ajuster la hitbox du personnage
@@ -300,11 +300,11 @@ create() {
     this.startMapTimer(); // Démarrage du timer
 
     this.score = 0;
-    this.zone_texte_score = this.add.text(250, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+    this.zone_texte_score = this.add.text(100, 20, 'pièce: 0', { fontSize: '32px', fill: '#ffffff' }); 
     this.zone_texte_score.setDepth(10);
 
     this.score2 = 0;
-    this.zone_texte_score2 = this.add.text(500, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+    this.zone_texte_score2 = this.add.text(500, 20, 'bouteille: 0', { fontSize: '32px', fill: '#ffffff' }); 
     this.zone_texte_score2.setDepth(10);
 
     // Ajouter la musique de fond
@@ -329,7 +329,7 @@ update(time) {
         this.background2.y = 400; // Remettre le fond en place
         this.background2.tilePositionY = 0; // Réinitialiser la position de la texture
     }
-    this.background2.tilePositionY -= 2.5; // Ajustement mineur pour éviter un blanc
+    this.background2.tilePositionY -= 2; // Ajustement mineur pour éviter un blanc
 
     // Défilement des rails
     this.rails.forEach(rail => {
@@ -337,7 +337,7 @@ update(time) {
             rail.y = 580; // Remettre les rails en place
             rail.tilePositionY = 0; // Réinitialiser la position de la texture
         }
-        rail.tilePositionY -= 2.5; // Ajustement mineur pour éviter un blanc
+        rail.tilePositionY -= 2; // Ajustement mineur pour éviter un blanc
     });
     
 
@@ -348,7 +348,7 @@ update(time) {
                 let element = row[i];
                 let xPosition = this.positions[i];
                 if (element === "barriere") {
-                    let barriere = this.physics.add.sprite(xPosition, -60, "img_barriere");
+                    let barriere = this.physics.add.sprite(xPosition, -80, "img_barriere");
                     barriere.setScale(2.5);
                     barriere.play("anim_barriere");
                     this.barriereGroup.add(barriere);
@@ -357,7 +357,7 @@ update(time) {
                     barriere.body.setOffset(2, 7);
                     barriere.setDepth(3);
                 } else if (element === "train") {
-                    let train = this.physics.add.sprite(xPosition, -150, "img_train");
+                    let train = this.physics.add.sprite(xPosition, -300, "img_train");
                     train.setScale(2.5);
                     this.trainGroup.add(train);
                     train.tilePositionY = 0;
@@ -407,7 +407,7 @@ update(time) {
 
     this.trainGroup.getChildren().forEach(train => {
         train.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (train.y > 810) {
+        if (train.y > 900) {
             train.destroy();
         }
     });
@@ -534,7 +534,7 @@ PickUpObjects(perso, objet) {
     if (objet.texture.key === "img_piece") {
         // Objet ramassé : pièce
         objet.destroy();
-        this.score += 2; // Exemple : ajouter 10 points pour une pièce
+        this.score += 1; // Exemple : ajouter 10 points pour une pièce
         this.zone_texte_score.setText("Score: " + this.score);
         this.sonPiece.play();
         
