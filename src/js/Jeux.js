@@ -53,7 +53,7 @@ pour la gestion du personnage et du gameplay.*/
 
     this.load.audio('son_piece', 'src/assets/piecesound.mp3');
     this.load.audio('son_bouteille', 'src/assets/bouteillesound.mp3');
-    this.load.audio('son_GameOver', 'src/assets/perdu.mp3')
+
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -314,7 +314,7 @@ create() {
     // Ajouter les effets sonores
     this.sonPiece = this.sound.add('son_piece');
     this.sonBouteille = this.sound.add('son_bouteille');
-    this.sonGameOver = this.sound.add('son_GameOver')
+
 }
 
 
@@ -534,7 +534,7 @@ PickUpObjects(perso, objet) {
     if (objet.texture.key === "img_piece") {
         // Objet ramassé : pièce
         objet.destroy();
-        this.score += 2;
+        this.score += 2; // Exemple : ajouter 10 points pour une pièce
         this.zone_texte_score.setText("Score: " + this.score);
         this.sonPiece.play();
         
@@ -693,9 +693,6 @@ gameOver() {
     this.background2.body.setVelocityY(0); // Arrête le mouvement du background
     this.background2.body.allowGravity = false; // Désactive la gravité
     
-    this.time.delayedCall(100, () => {
-        this.sonGameOver.play();
-    }, this);
 
     // Arrêter le défilement des rails
     this.rails.forEach(rail => {
