@@ -106,7 +106,7 @@ create() {
     this.anims.create({
         key: "anim_piece",
         frames: this.anims.generateFrameNumbers("img_piece", { start: 0, end: 5 }),
-        frameRate: 24,
+        frameRate: 20,
         repeat: -1
     });
 
@@ -146,7 +146,7 @@ create() {
     this.anims.create({
         key: "anim_jump",
         frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
-        frameRate: 7,
+        frameRate: 5,
         repeat: 0
     });
 
@@ -198,7 +198,7 @@ update(time) {
         this.background2.y = 400; // Remettre le fond en place
         this.background2.tilePositionY = 0; // Réinitialiser la position de la texture
     }
-    this.background2.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
+    this.background2.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
 
     // Défilement des rails
     this.rails.forEach(rail => {
@@ -206,7 +206,7 @@ update(time) {
             rail.y = 580; // Remettre les rails en place
             rail.tilePositionY = 0; // Réinitialiser la position de la texture
         }
-        rail.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
+        rail.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
     });
     
 
@@ -390,7 +390,7 @@ jumpOverBarrier(time) {
             this.perso.body.checkCollision.none = false; // Réactiver les collisions
         }, this);
 
-        this.jumpCooldown = time + 500;
+        this.jumpCooldown = time + 1000;
     }
 }
 
