@@ -24,7 +24,7 @@ export default class jeux extends Phaser.Scene {
         this.persoCollidersEnabled = true; // Ajout de cette variable
         this.conteurbouteille = 0; // Compteur de bouteilles
         this.controlsInverted = false; // État des touches inversées
-        
+        this.mapTimer = null; // Ajout du timer
     
     }
 
@@ -52,6 +52,7 @@ pour la gestion du personnage et du gameplay.*/
 
     this.load.audio('son_piece', 'src/assets/piecesound.mp3');
     this.load.audio('son_bouteille', 'src/assets/bouteillesound.mp3');
+    this.load.audio('son_GameOver', 'src/assets/perdu.mp3')
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -151,12 +152,14 @@ create() {
     });
 
     // Création de l'animation de saut
-    this.anims.create({
-        key: "anim_jump",
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
-        frameRate: 5,
-        repeat: 0
-    });
+    if (!this.anims.exists('anim_jump')) {
+        this.anims.create({
+            key: "anim_jump",
+            frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
+            frameRate: 5,
+            repeat: 0
+        });
+    }
 
     // Lancer l'animation de base en boucle
     this.perso.anims.play("anim_perso");
@@ -172,7 +175,6 @@ create() {
 
     this.maps = [
         [
-            [null, null, null],
             ["barriere", null, "train"],
         ],
 
@@ -294,6 +296,7 @@ create() {
     this.currentMapRow = 0;
     this.lastObjY = 0;
     this.generateMap();
+    this.startMapTimer(); // Démarrage du timer
 
     this.score = 0;
     this.zone_texte_score = this.add.text(250, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
@@ -310,6 +313,7 @@ create() {
     // Ajouter les effets sonores
     this.sonPiece = this.sound.add('son_piece');
     this.sonBouteille = this.sound.add('son_bouteille');
+    this.sonGameOver = this.sound.add('son_GameOver')
 }
 
 
@@ -381,17 +385,13 @@ update(time) {
             this.time.delayedCall(25, () => {
                 this.currentMapRow++;
             }, this);
-        } else {
-            if (this.barriereGroup.getLength() === 0 && this.trainGroup.getLength() === 0 && this.pieceGroup.getLength() === 0 && this.bouteilleGroup.getLength() === 0) {
-                this.generateMap();
-            }
         }
     }
 
     // Défilement et destruction des obstacles
     this.barriereGroup.getChildren().forEach(barriere => {
         barriere.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (barriere.y > 800) {
+        if (barriere.y > 810) {
             barriere.destroy();
         }
     });;
@@ -406,21 +406,21 @@ update(time) {
 
     this.trainGroup.getChildren().forEach(train => {
         train.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (train.y > 800) {
+        if (train.y > 810) {
             train.destroy();
         }
     });
 
     this.pieceGroup.getChildren().forEach(piece => {
         piece.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (piece.y > 800) {
+        if (piece.y > 810) {
             piece.destroy();
         }
     });
 
     this.bouteilleGroup.getChildren().forEach(bouteille => {
         bouteille.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (bouteille.y > 800) {
+        if (bouteille.y > 810) {
             bouteille.destroy();
         }
     });
@@ -598,11 +598,36 @@ generateMap() {
     this.currentMapIndex = (this.currentMapIndex + 1) % this.maps.length;
 }
 
+startMapTimer() {
+    if (!this.mapTimer) {
+        this.mapTimer = this.time.addEvent({
+            delay: 2000,
+            callback: this.generateMap,
+            callbackScope: this,
+            loop: true
+        });
+    }
+}
+
+stopMapTimer() {
+    if (this.mapTimer) {
+        this.mapTimer.remove();
+        this.mapTimer = null;
+    }
+}
+
 gameOver() {
     this.physics.pause(); // Met le jeu en pause
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
     this.musiqueFond.stop();
+    this.stopMapTimer(); // Arrêt du timer
+    this.anims.remove('anim_jump'); // Suppression de l'animation
+    this.anims.remove('anim_bouteille');
+    this.anims.remove('anim_piece');
+    this.anims.remove('anim_perso');
+    this.anims.remove('anim_barriere');
+    
     
 
     // Arrêter les animations des groupes d'objets
@@ -614,6 +639,10 @@ gameOver() {
     // Arrêter le défilement du background
     this.background2.body.setVelocityY(0); // Arrête le mouvement du background
     this.background2.body.allowGravity = false; // Désactive la gravité
+    
+    this.time.delayedCall(100, () => {
+        this.sonGameOver.play();
+    }, this);
 
     // Arrêter le défilement des rails
     this.rails.forEach(rail => {
