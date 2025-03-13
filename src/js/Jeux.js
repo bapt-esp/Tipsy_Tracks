@@ -48,6 +48,10 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     this.load.image("img_boutton_rejouer", "src/assets/boutton_rejouer.png")
     this.load.image("img_boutton_quitter", "src/assets/boutton_quitter.png")
+    this.load.audio('musique_fond', 'src/assets/musiquejeu.mp3');
+
+    this.load.audio('son_piece', 'src/assets/piecesound.mp3');
+    this.load.audio('son_bouteille', 'src/assets/bouteillesound.mp3');
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -299,6 +303,14 @@ create() {
     this.zone_texte_score2 = this.add.text(500, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
     this.zone_texte_score2.setDepth(10);
 
+    // Ajouter la musique de fond
+    this.musiqueFond = this.sound.add('musique_fond', { loop: true, volume: 0.5 }); // loop: true pour la répétition
+    this.musiqueFond.play();
+
+    // Ajouter les effets sonores
+    this.sonPiece = this.sound.add('son_piece');
+    this.sonBouteille = this.sound.add('son_bouteille');
+
 }
 
 
@@ -488,16 +500,17 @@ PickUpObjects(perso, objet) {
         // Objet ramassé : pièce
         objet.destroy();
         this.score += 2; // Exemple : ajouter 10 points pour une pièce
-        this.zone_texte_score.setText("Score: " + this.score); 
+        this.zone_texte_score.setText("Score: " + this.score);
+        this.sonPiece.play();
         
     } else if (objet.texture.key === "img_bouteille") {
         // Objet ramassé : bouteille
         objet.destroy();
         this.score2 += 1; // Exemple : ajouter 10 points pour une pièce
         this.zone_texte_score2.setText("Score: " + this.score2); 
-        
         //fonction pour inverser les touches en fontion du nb de bouteille.
         this.conteurbouteille++;
+        this.sonBouteille.play();
 
         if (this.conteurbouteille>=3){
             this.controlsInverted = !this.controlsInverted;
@@ -590,6 +603,7 @@ gameOver() {
     this.physics.pause(); // Met le jeu en pause
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
+    this.musiqueFond.stop();
 
     // Arrêter les animations des groupes d'objets
     this.barriereGroup.getChildren().forEach(barriere => barriere.anims.pause());
@@ -627,6 +641,7 @@ gameOver() {
     // Ajouter l'événement pour le bouton "Rejouer"
     replayButton.on('pointerdown', () => {
         this.scene.restart("jeux"); // Relance la scène du jeu
+        this.musiqueFond.play();
     });
 
     // Créer le bouton "Quitter"
