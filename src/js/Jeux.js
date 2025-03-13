@@ -177,111 +177,115 @@ create() {
         ],
 
         [
-            [null, null, null],
             [null, "train", null],
         ],
 
         [
-            [null, null, null],
             ["bouteille", "piece", null],
         ],
 
-        [
-            [null, null, null],
+        [ 
             ["barriere", "barriere", "piece"],
         ],
 
         [
-            [null, null, null],
             ["train", "piece", "bouteille"],
         ],
         [
-            [null, null, null],
+            ["barriere", "barriere",  "barriere"],
+        ],
+        [
             ["bouteille", "bouteille", "piece"],
         ],
         [
-            [null, null, null],
             ["bouteille", "bouteille", "train"],
         ],
         [
-            [null, null, null],
             ["barriere", "train", "train"],
         ],
         [
-            [null, null, null],
             [null, "train", null],
         ],
         [
-            [null, null, null],
-            ["barriere", "train", null],
+            ["barriere", "bouteille", "barriere"],
         ],
         [
-            [null, null, null],
-            ["train", "bouteille", "piece"],
-        ],
-        [
-            [null, null, null],
-            ["train", null, "barriere"],
-        ],
-        [
-            [null, null, null],
-            [null, "train", "barriere"],
-        ],
-        [
-            [null, null, null],
             ["bouteille", "bouteille", "barriere"],
         ],
         [
-            [null, null, null],
+            ["train", "bouteille", "piece"],
+        ],
+        [
+            ["train", null, "barriere"],
+        ],
+        [
+            [null, "train", "barriere"],
+        ],
+        [
+            ["train", "bouteille", "barriere"],
+        ],
+        [
             ["piece", "train", "barriere"],
         ],
         [
-            [null, null, null],
             ["train", "train", "barriere"],
         ],
         [
-            [null, null, null],
-            ["piece", "bouteille", "barriere"],
+            ["piece", "bouteille", "bouteille"],
         ],
         [
-            [null, null, null],
             ["bouteille", "train", "barriere"],
         ],
         [
-            [null, null, null],
             ["train", "train", "barriere"],
         ],
         [
-            [null, null, null],
             ["barriere", "train", "barriere"],
         ],
         [
-            [null, null, null],
             ["piece", "train", "train"],
         ],
         [
-            [null, null, null],
             [null, "barriere", "piece"],
         ],
         [
-            [null, null, null],
-            [null, "barriere", "piece"],
+            ["train", "train", "bouteille"],
         ],
         [
-            [null, null, null],
             ["piece", "barriere", "piece"],
         ],
         [
-            [null, null, null],
             ["barriere", "barriere", "piece"],
         ],
         [
-            [null, null, null],
             ["piece", "barriere",  null],
         ],
         [
-            [null, null, null],
             ["piece", "barriere",  "bouteille"],
+        ],
+        [
+            ["bouteille", "train",  "bouteille"],
+        ],
+        [
+            ["train", "bouteille",  "piece"],
+        ],
+        [
+            ["barriere", null,  "piece"],
+        ],
+        [
+            ["bouteille", "barriere",  "piece"],
+        ],
+        [
+            ["piece", "bouteille",  "piece"],
+        ],
+        [
+            ["train", "train",  "barriere"],
+        ],
+        [
+            ["train", null,  "bouteille"],
+        ],
+        [
+            ["piece", "train",  "barriere"],
         ],
         
 
