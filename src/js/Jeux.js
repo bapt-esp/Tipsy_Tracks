@@ -541,15 +541,25 @@ PickUpObjects(perso, objet) {
     } else if (objet.texture.key === "img_bouteille") {
         // Objet ramassé : bouteille
         objet.destroy();
-        this.score2 += 1; 
+        this.score2 += 0.5; 
         this.zone_texte_score2.setText("Score: " + this.score2); 
         
         //fonction pour inverser les touches en fontion du nb de bouteille.
-        this.bottlesCollected +=1;
+        this.bottlesCollected +=0.5;
         this.sonBouteille.play();
-        if (this.bottlesCollected >=6 ) { 
+        if (this.bottlesCollected >=5 ) { 
             this.controlsInverted = true;
             this.controlsInverted2 = false;
+        }
+        if (this.bottlesCollected ===10){
+            this.gameOver();
+            let gameOverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, 'coma éthylique', {
+                fontSize: '64px',
+                fill: '#ff0000',
+                fontStyle: 'bold',
+                align: 'center'
+            }).setOrigin(0.5);
+            gameOverText.setDepth(10);
         }
         /*if (this.bottlesCollected >=6 ) {
             this.controlsInverted = false;
@@ -670,6 +680,8 @@ gameOver() {
     this.anims.remove('anim_barriere');
     this.controlsInverted = false;
     this.controlsInverted2 = false;
+    this.bottlesCollected = 0;
+    this.score = 0;
 
     // Arrêter les animations des groupes d'objets
     this.barriereGroup.getChildren().forEach(barriere => barriere.anims.pause());
