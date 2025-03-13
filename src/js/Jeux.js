@@ -22,9 +22,9 @@ export default class jeux extends Phaser.Scene {
         this.isJumpingOverBarrier = false;
         this.persoInitialized = false;
         this.persoCollidersEnabled = true; // Ajout de cette variable
-        this.conteurbouteille = 0; // Compteur de bouteilles
-        this.controlsInverted = false; // État des touches inversées
-    
+        this.bottlesCollected = 0; // Nombre de bouteilles collectées
+        this.controlsInverted = false;
+        this.controlsInverted2 = false;
     
     }
 
@@ -311,27 +311,78 @@ update(time) {
    
     // Gestion des déplacements gauche/droite avec cooldown
     if (!this.isMoving && this.moveCooldown < time) {
-        if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
-            this.currentPositionIndex--;
-            this.moveCharacter();
-            this.moveCooldown = time + 200;
-        } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
-            this.currentPositionIndex++;
-            this.moveCharacter();
-            this.moveCooldown = time + 200;
+        if (this.controlsInverted2 === false && this.controlsInverted === false){
+            if (this.cursors.left.isDown && this.currentPositionIndex > 0) {
+                this.currentPositionIndex--;
+                this.moveCharacter();
+                this.moveCooldown = time + 200;
+                return
+            
+            } else if (this.cursors.right.isDown && this.currentPositionIndex < this.positions.length - 1) {
+                this.currentPositionIndex++;
+                this.moveCharacter();
+                this.moveCooldown = time + 200;
+                return
+            }
         }
+        else if(this.controlsInverted2 === true && this.controlsInverted === false){
+            if (this.cursors.up.isDown && this.currentPositionIndex < this.positions.length - 1) {
+                this.currentPositionIndex++;
+                this.moveCharacter();
+                this.moveCooldown = time + 200;
+                return
+            } else if (this.cursors.down.isDown && this.currentPositionIndex > 0) {
+                this.currentPositionIndex--;
+                this.moveCharacter();
+                this.moveCooldown = time + 200;
+                return
+            }
+        
+        }
+        else if(this.controlsInverted2 === false && this.controlsInverted === true){
+            if (this.cursors.left.isDown && this.currentPositionIndex < this.positions.length - 1) {
+                this.currentPositionIndex++;
+                this.moveCharacter();
+                this.moveCooldown = time + 200;
+                return
+            } else if (this.cursors.right.isDown && this.currentPositionIndex > 0) {
+                this.currentPositionIndex--;
+                this.moveCharacter();
+                this.moveCooldown = time + 200;
+                return
+            }
+        }
+        
+        
     }
     
     // Gestion du saut
-    if (this.cursors.up.isDown && !this.isJumping && this.perso.body.onFloor()) { // Ajout de la vérification du sol
-        this.isJumping = true;
-        this.perso.setVelocityY(-300);
-        this.perso.anims.play("anim_jump");
+    if (this.controlsInverted2 === true){
+        if (this.cursors.left.isDown && !this.isJumping && this.perso.body.onFloor()) { // Ajout de la vérification du sol
+            this.isJumping = true;
+            this.perso.setVelocityY(-300);
+            this.perso.anims.play("anim_jump");
 
-        this.time.delayedCall(500, () => {
-            this.isJumping = false;
-            this.perso.anims.play("anim_perso");
-        });
+            this.time.delayedCall(500, () => {
+                this.isJumping = false;
+                this.perso.anims.play("anim_perso");
+            });
+            return
+        }
+    
+    }else {
+        if (this.cursors.up.isDown && !this.isJumping && this.perso.body.onFloor()) { // Ajout de la vérification du sol
+            this.isJumping = true;
+            this.perso.setVelocityY(-300);
+            this.perso.anims.play("anim_jump");
+    
+            this.time.delayedCall(500, () => {
+                this.isJumping = false;
+                this.perso.anims.play("anim_perso");
+            });
+            return
+        }
+    
     }
 
     // Vérifier si le personnage touche le sol
@@ -341,23 +392,7 @@ update(time) {
             this.perso.anims.play("anim_perso", true);
         }
     }
-
-    if (!this.isMoving && this.moveCooldown < time) {
-        let left = this.controlsInverted ? this.cursors.right.isDown : this.cursors.left.isDown;
-        let right = this.controlsInverted ? this.cursors.left.isDown : this.cursors.right.isDown;
-    
-        if (left && this.currentPositionIndex > 0) {
-            this.currentPositionIndex--;
-            this.moveCharacter();
-            this.moveCooldown = time + 200;
-        } else if (right && this.currentPositionIndex < this.positions.length - 1) {
-            this.currentPositionIndex++;
-            this.moveCharacter();
-            this.moveCooldown = time + 200;
-        }
-    }
-
-}
+}   
 
 moveCharacter() {
     console.log("Deplacement vers :", this.positions[this.currentPositionIndex]); // Debug
@@ -386,14 +421,16 @@ PickUpObjects(perso, objet) {
         // Objet ramassé : bouteille
         objet.destroy();
         this.score2 += 1; // Exemple : ajouter 10 points pour une pièce
-        this.zone_texte_score2.setText("Score: " + this.score2); 
-        
-        //fonction pour inverser les touches en fontion du nb de bouteille.
-        this.conteurbouteille++;
-
-        if (this.conteurbouteille>=3){
-            this.controlsInverted = !this.controlsInverted;
+        this.zone_texte_score2.setText("Score: " + this.score2);
+        this.bottlesCollected +=1;
+        if (this.bottlesCollected >=3 ) { 
+            this.controlsInverted = true;
+            this.controlsInverted2 = false;
         }
+        if (this.bottlesCollected >=6 ) {
+            this.controlsInverted = false;
+            this.controlsInverted2 = true;
+        }       
     }
 
     // Ajouter d'autres actions si nécessaire (effets visuels, sonores, etc.)
@@ -482,7 +519,7 @@ gameOver() {
     this.physics.pause(); // Met le jeu en pause
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
-
+    
     // Arrêter les animations des groupes d'objets
     this.barriereGroup.getChildren().forEach(barriere => barriere.anims.pause());
     this.trainGroup.getChildren().forEach(train => train.anims.pause());
