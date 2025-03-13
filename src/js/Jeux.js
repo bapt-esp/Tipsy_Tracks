@@ -25,6 +25,7 @@ export default class jeux extends Phaser.Scene {
         this.bottlesCollected = 0; // Nombre de bouteilles collectées
         this.controlsInverted = false;
         this.controlsInverted2 = false;
+        this.mapTimer = null; // Ajout du timer
     
     }
 
@@ -48,6 +49,11 @@ pour la gestion du personnage et du gameplay.*/
     this.load.spritesheet("img_rails", "src/assets/rails.png", { frameWidth: 128, frameHeight: 128 });
     this.load.image("img_boutton_rejouer", "src/assets/boutton_rejouer.png")
     this.load.image("img_boutton_quitter", "src/assets/boutton_quitter.png")
+    this.load.audio('musique_fond', 'src/assets/musiquejeu.mp3');
+
+    this.load.audio('son_piece', 'src/assets/piecesound.mp3');
+    this.load.audio('son_bouteille', 'src/assets/bouteillesound.mp3');
+    this.load.audio('son_GameOver', 'src/assets/perdu.mp3')
 }
 
 /*La fonction create() initialise les objets du jeu après le chargement des ressources. 
@@ -88,11 +94,11 @@ create() {
 
     this.barriereGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
     this.trainGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
 
 
@@ -120,11 +126,11 @@ create() {
 
     this.pieceGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
     this.bouteilleGroup.children.iterate(child => {
         child.body.allowGravity = false;
-        child.body.setMaxVelocityY(150); // Ajustez la valeur selon vos besoins
+        child.body.setMaxVelocityY(500); // Ajustez la valeur selon vos besoins
     });
 
 
@@ -147,12 +153,14 @@ create() {
     });
 
     // Création de l'animation de saut
-    this.anims.create({
-        key: "anim_jump",
-        frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
-        frameRate: 5,
-        repeat: 0
-    });
+    if (!this.anims.exists('anim_jump')) {
+        this.anims.create({
+            key: "anim_jump",
+            frames: this.anims.generateFrameNumbers("img_perso", { start: 9, end: 16 }),
+            frameRate: 5,
+            repeat: 0
+        });
+    }
 
     // Lancer l'animation de base en boucle
     this.perso.anims.play("anim_perso");
@@ -168,20 +176,128 @@ create() {
 
     this.maps = [
         [
-            [null, null, null],
             ["barriere", null, "train"],
-            [null, null, null],
-            [null, "bouteille", null],
-            [null, "barrière", null],
-
-
         ],
+
+        [
+            [null, "train", null],
+        ],
+
+        [
+            ["bouteille", "piece", null],
+        ],
+
+        [ 
+            ["barriere", "barriere", "piece"],
+        ],
+
+        [
+            ["train", "piece", "bouteille"],
+        ],
+        [
+            ["barriere", "barriere",  "barriere"],
+        ],
+        [
+            ["bouteille", "bouteille", "piece"],
+        ],
+        [
+            ["bouteille", "bouteille", "train"],
+        ],
+        [
+            ["barriere", "train", "train"],
+        ],
+        [
+            [null, "train", null],
+        ],
+        [
+            ["barriere", "bouteille", "barriere"],
+        ],
+        [
+            ["bouteille", "bouteille", "barriere"],
+        ],
+        [
+            ["train", "bouteille", "piece"],
+        ],
+        [
+            ["train", null, "barriere"],
+        ],
+        [
+            [null, "train", "barriere"],
+        ],
+        [
+            ["train", "bouteille", "barriere"],
+        ],
+        [
+            ["piece", "train", "barriere"],
+        ],
+        [
+            ["train", "train", "barriere"],
+        ],
+        [
+            ["piece", "bouteille", "bouteille"],
+        ],
+        [
+            ["bouteille", "train", "barriere"],
+        ],
+        [
+            ["train", "train", "barriere"],
+        ],
+        [
+            ["barriere", "train", "barriere"],
+        ],
+        [
+            ["piece", "train", "train"],
+        ],
+        [
+            [null, "barriere", "piece"],
+        ],
+        [
+            ["train", "train", "bouteille"],
+        ],
+        [
+            ["piece", "barriere", "piece"],
+        ],
+        [
+            ["barriere", "barriere", "piece"],
+        ],
+        [
+            ["piece", "barriere",  null],
+        ],
+        [
+            ["piece", "barriere",  "bouteille"],
+        ],
+        [
+            ["bouteille", "train",  "bouteille"],
+        ],
+        [
+            ["train", "bouteille",  "piece"],
+        ],
+        [
+            ["barriere", null,  "piece"],
+        ],
+        [
+            ["bouteille", "barriere",  "piece"],
+        ],
+        [
+            ["piece", "bouteille",  "piece"],
+        ],
+        [
+            ["train", "train",  "barriere"],
+        ],
+        [
+            ["train", null,  "bouteille"],
+        ],
+        [
+            ["piece", "train",  "barriere"],
+        ],
+        
 
     ]
     this.currentMap = null;
     this.currentMapRow = 0;
     this.lastObjY = 0;
     this.generateMap();
+    this.startMapTimer(); // Démarrage du timer
 
     this.score = 0;
     this.zone_texte_score = this.add.text(250, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
@@ -191,6 +307,14 @@ create() {
     this.zone_texte_score2 = this.add.text(500, 20, 'score: 0', { fontSize: '32px', fill: '#000' }); 
     this.zone_texte_score2.setDepth(10);
 
+    // Ajouter la musique de fond
+    this.musiqueFond = this.sound.add('musique_fond', { loop: true, volume: 0.5 }); // loop: true pour la répétition
+    this.musiqueFond.play();
+
+    // Ajouter les effets sonores
+    this.sonPiece = this.sound.add('son_piece');
+    this.sonBouteille = this.sound.add('son_bouteille');
+    this.sonGameOver = this.sound.add('son_GameOver')
 }
 
 
@@ -205,7 +329,7 @@ update(time) {
         this.background2.y = 400; // Remettre le fond en place
         this.background2.tilePositionY = 0; // Réinitialiser la position de la texture
     }
-    this.background2.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
+    this.background2.tilePositionY -= 2.5; // Ajustement mineur pour éviter un blanc
 
     // Défilement des rails
     this.rails.forEach(rail => {
@@ -213,7 +337,7 @@ update(time) {
             rail.y = 580; // Remettre les rails en place
             rail.tilePositionY = 0; // Réinitialiser la position de la texture
         }
-        rail.tilePositionY -= 1; // Ajustement mineur pour éviter un blanc
+        rail.tilePositionY -= 2.5; // Ajustement mineur pour éviter un blanc
     });
     
 
@@ -259,20 +383,16 @@ update(time) {
 
                 }
             }
-            this.time.delayedCall(2000, () => {
+            this.time.delayedCall(25, () => {
                 this.currentMapRow++;
             }, this);
-        } else {
-            if (this.barriereGroup.getLength() === 0 && this.trainGroup.getLength() === 0 && this.pieceGroup.getLength() === 0 && this.bouteilleGroup.getLength() === 0) {
-                this.generateMap();
-            }
         }
     }
 
     // Défilement et destruction des obstacles
     this.barriereGroup.getChildren().forEach(barriere => {
-        barriere.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (barriere.y > 800) {
+        barriere.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
+        if (barriere.y > 810) {
             barriere.destroy();
         }
     });;
@@ -286,22 +406,22 @@ update(time) {
     this.handleJump(time);
 
     this.trainGroup.getChildren().forEach(train => {
-        train.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (train.y > 800) {
+        train.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
+        if (train.y > 810) {
             train.destroy();
         }
     });
 
     this.pieceGroup.getChildren().forEach(piece => {
-        piece.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (piece.y > 800) {
+        piece.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
+        if (piece.y > 810) {
             piece.destroy();
         }
     });
 
     this.bouteilleGroup.getChildren().forEach(bouteille => {
-        bouteille.setVelocityY(150); // Utilisez la même valeur que dans setMaxVelocityY()
-        if (bouteille.y > 800) {
+        bouteille.setVelocityY(300); // Utilisez la même valeur que dans setMaxVelocityY()
+        if (bouteille.y > 810) {
             bouteille.destroy();
         }
     });
@@ -415,14 +535,18 @@ PickUpObjects(perso, objet) {
         // Objet ramassé : pièce
         objet.destroy();
         this.score += 2; // Exemple : ajouter 10 points pour une pièce
-        this.zone_texte_score.setText("Score: " + this.score); 
+        this.zone_texte_score.setText("Score: " + this.score);
+        this.sonPiece.play();
         
     } else if (objet.texture.key === "img_bouteille") {
         // Objet ramassé : bouteille
         objet.destroy();
         this.score2 += 1; // Exemple : ajouter 10 points pour une pièce
-        this.zone_texte_score2.setText("Score: " + this.score2);
+        this.zone_texte_score2.setText("Score: " + this.score2); 
+        
+        //fonction pour inverser les touches en fontion du nb de bouteille.
         this.bottlesCollected +=1;
+        this.sonBouteille.play();
         if (this.bottlesCollected >=3 ) { 
             this.controlsInverted = true;
             this.controlsInverted2 = false;
@@ -430,8 +554,8 @@ PickUpObjects(perso, objet) {
         if (this.bottlesCollected >=6 ) {
             this.controlsInverted = false;
             this.controlsInverted2 = true;
-        }       
     }
+}
 
     // Ajouter d'autres actions si nécessaire (effets visuels, sonores, etc.)
     
@@ -515,11 +639,37 @@ generateMap() {
     this.currentMapIndex = (this.currentMapIndex + 1) % this.maps.length;
 }
 
+startMapTimer() {
+    if (!this.mapTimer) {
+        this.mapTimer = this.time.addEvent({
+            delay: 2000,
+            callback: this.generateMap,
+            callbackScope: this,
+            loop: true
+        });
+    }
+}
+
+stopMapTimer() {
+    if (this.mapTimer) {
+        this.mapTimer.remove();
+        this.mapTimer = null;
+    }
+}
+
 gameOver() {
     this.physics.pause(); // Met le jeu en pause
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
+    this.musiqueFond.stop();
+    this.stopMapTimer(); // Arrêt du timer
+    this.anims.remove('anim_jump'); // Suppression de l'animation
+    this.anims.remove('anim_bouteille');
+    this.anims.remove('anim_piece');
+    this.anims.remove('anim_perso');
+    this.anims.remove('anim_barriere');
     
+
     // Arrêter les animations des groupes d'objets
     this.barriereGroup.getChildren().forEach(barriere => barriere.anims.pause());
     this.trainGroup.getChildren().forEach(train => train.anims.pause());
@@ -529,6 +679,10 @@ gameOver() {
     // Arrêter le défilement du background
     this.background2.body.setVelocityY(0); // Arrête le mouvement du background
     this.background2.body.allowGravity = false; // Désactive la gravité
+    
+    this.time.delayedCall(100, () => {
+        this.sonGameOver.play();
+    }, this);
 
     // Arrêter le défilement des rails
     this.rails.forEach(rail => {
