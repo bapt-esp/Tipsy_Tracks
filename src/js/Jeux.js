@@ -11,7 +11,7 @@ export default class jeux extends Phaser.Scene {
         this.jumpCooldown = 0;
         this.positions = [200, 400, 600];
         this.currentPositionIndex = 1;
-        this.background = null;
+        this.background2 = null;
         this.isMoving = false;
         this.occupiedPositions = [];
         this.maps = [];
@@ -36,7 +36,7 @@ pour la gestion du personnage et du gameplay.*/
 
  preload() {
     this.load.spritesheet("img_perso", "src/assets/perso.png", { frameWidth: 30, frameHeight: 55 });
-    this.load.image("img_background", "src/assets/background.png");
+    this.load.image("img_background2", "src/assets/background2.png");
     this.load.spritesheet("img_barriere", "src/assets/barrière.png", {frameWidth: 64, frameHeight: 32});
     this.load.spritesheet("img_train", "src/assets/Train.png",{frameWidth: 64, frameHeight: 174});
     this.load.spritesheet("img_piece","src/assets/piece_redimentionner.png",{frameWidth: 34, frameHeight: 32});
@@ -53,11 +53,11 @@ Elle crée le sol, le personnage, les obstacles et les animations.*/
 create() {
 /*A modifier à la fin si besoin. refaire le fond en 800x800
     avec une fenetre de 800x800 et une bande de terre de 600 de large*/
-    this.background = this.add.tileSprite(400, 400, 400, 400, "img_background");
-    this.background.setScale(3);
-    this.physics.add.existing(this.background); // Ajout d'un corps physique
-    this.background.body.setVelocityY(this.scrollSpeedValue); // Définir la vitesse
-    this.background.body.allowGravity = false; // Désactiver la gravité
+    this.background2 = this.add.tileSprite(400, 300, 832, 832, "img_background2");
+    this.background2.setScale(2);
+    this.physics.add.existing(this.background2); // Ajout d'un corps physique
+    this.background2.body.setVelocityY(this.scrollSpeedValue); // Définir la vitesse
+    this.background2.body.allowGravity = false; // Désactiver la gravité
 
      // Création des trois rails indépendants aux positions 200, 400 et 600
      for (let i = 0; i < 3; i++) {
@@ -194,11 +194,11 @@ update(time) {
     }
     
     // Défilement du background
-    if (this.background.y > 1200) {
-        this.background.y = 400; // Remettre le fond en place
-        this.background.tilePositionY = 0; // Réinitialiser la position de la texture
+    if (this.background2.y > 1200) {
+        this.background2.y = 400; // Remettre le fond en place
+        this.background2.tilePositionY = 0; // Réinitialiser la position de la texture
     }
-    this.background.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
+    this.background2.tilePositionY -= 0.5; // Ajustement mineur pour éviter un blanc
 
     // Défilement des rails
     this.rails.forEach(rail => {
@@ -464,8 +464,8 @@ gameOver() {
     this.bouteilleGroup.getChildren().forEach(bouteille => bouteille.anims.pause());
 
     // Arrêter le défilement du background
-    this.background.body.setVelocityY(0); // Arrête le mouvement du background
-    this.background.body.allowGravity = false; // Désactive la gravité
+    this.background2.body.setVelocityY(0); // Arrête le mouvement du background
+    this.background2.body.allowGravity = false; // Désactive la gravité
 
     // Arrêter le défilement des rails
     this.rails.forEach(rail => {
