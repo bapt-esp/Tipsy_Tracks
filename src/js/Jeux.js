@@ -24,7 +24,7 @@ export default class jeux extends Phaser.Scene {
         this.persoCollidersEnabled = true; // Ajout de cette variable
         this.conteurbouteille = 0; // Compteur de bouteilles
         this.controlsInverted = false; // État des touches inversées
-    
+        
     
     }
 
@@ -306,7 +306,6 @@ create() {
     // Ajouter les effets sonores
     this.sonPiece = this.sound.add('son_piece');
     this.sonBouteille = this.sound.add('son_bouteille');
-
 }
 
 
@@ -600,6 +599,7 @@ gameOver() {
     this.perso.setTint(0xff0000); // Teinte le personnage en rouge
     this.perso.anims.stop();
     this.musiqueFond.stop();
+    
 
     // Arrêter les animations des groupes d'objets
     this.barriereGroup.getChildren().forEach(barriere => barriere.anims.pause());
@@ -637,7 +637,6 @@ gameOver() {
     // Ajouter l'événement pour le bouton "Rejouer"
     replayButton.on('pointerdown', () => {
         this.scene.restart("jeux"); // Relance la scène du jeu
-        this.musiqueFond.play();
     });
 
     // Créer le bouton "Quitter"
