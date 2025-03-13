@@ -22,6 +22,8 @@ export default class jeux extends Phaser.Scene {
         this.isJumpingOverBarrier = false;
         this.persoInitialized = false;
         this.persoCollidersEnabled = true; // Ajout de cette variable
+        this.conteurbouteille = 0; // Compteur de bouteilles
+        this.controlsInverted = false; // État des touches inversées
     
     
     }
@@ -340,6 +342,20 @@ update(time) {
         }
     }
 
+    if (!this.isMoving && this.moveCooldown < time) {
+        let left = this.controlsInverted ? this.cursors.right.isDown : this.cursors.left.isDown;
+        let right = this.controlsInverted ? this.cursors.left.isDown : this.cursors.right.isDown;
+    
+        if (left && this.currentPositionIndex > 0) {
+            this.currentPositionIndex--;
+            this.moveCharacter();
+            this.moveCooldown = time + 200;
+        } else if (right && this.currentPositionIndex < this.positions.length - 1) {
+            this.currentPositionIndex++;
+            this.moveCharacter();
+            this.moveCooldown = time + 200;
+        }
+    }
 
 }
 
@@ -365,18 +381,23 @@ PickUpObjects(perso, objet) {
         objet.destroy();
         this.score += 2; // Exemple : ajouter 10 points pour une pièce
         this.zone_texte_score.setText("Score: " + this.score); 
-        //console.log("Pièce ramassée. Score :", this.score);
+        
     } else if (objet.texture.key === "img_bouteille") {
         // Objet ramassé : bouteille
         objet.destroy();
-        this.score2 += 2; // Exemple : ajouter 10 points pour une pièce
+        this.score2 += 1; // Exemple : ajouter 10 points pour une pièce
         this.zone_texte_score2.setText("Score: " + this.score2); 
-        //console.log("Bouteille ramassée. Score :", this.score);
+        
+        //fonction pour inverser les touches en fontion du nb de bouteille.
+        this.conteurbouteille++;
+
+        if (this.conteurbouteille>=3){
+            this.controlsInverted = !this.controlsInverted;
+        }
     }
 
     // Ajouter d'autres actions si nécessaire (effets visuels, sonores, etc.)
-    /*score += 10;
-    zone_texte_score.setText("Score: " + score); */
+    
 }
 
 
