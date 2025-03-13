@@ -13,7 +13,7 @@ this.load.image("img_reglejeux","src/assets/nouvreglejeux.png")
 create(){
 this.regle = this.add.image(400, 300, "img_regle");
 
-let playButtonhelp = this.add.image(400, 600, "img_quitte").setInteractive();
+let playButtonhelp = this.add.image(400, 540, "img_quitte").setInteractive();
     playButtonhelp.setScale(2);
     playButtonhelp.on("pointerdown", () => {
         this.scene.start("menu");
