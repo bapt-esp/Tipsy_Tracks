@@ -534,18 +534,18 @@ PickUpObjects(perso, objet) {
     if (objet.texture.key === "img_piece") {
         // Objet ramassé : pièce
         objet.destroy();
-        this.score += 1; // Exemple : ajouter 10 points pour une pièce
-        this.zone_texte_score.setText("Score: " + this.score);
+        this.score += 2; // Exemple : ajouter 10 points pour une pièce
+        this.zone_texte_score.setText("pièces: " + this.score);
         this.sonPiece.play();
         
     } else if (objet.texture.key === "img_bouteille") {
         // Objet ramassé : bouteille
         objet.destroy();
-        this.score2 += 0.5; 
-        this.zone_texte_score2.setText("Score: " + this.score2); 
+        this.score2 += 1; 
+        this.zone_texte_score2.setText("bouteilles: " + this.score2); 
         
         //fonction pour inverser les touches en fontion du nb de bouteille.
-        this.bottlesCollected +=0.5;
+        this.bottlesCollected +=1;
         this.sonBouteille.play();
         if (this.bottlesCollected >=5 ) { 
             this.controlsInverted = true;
